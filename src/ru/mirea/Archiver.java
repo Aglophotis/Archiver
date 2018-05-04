@@ -48,7 +48,7 @@ public class Archiver {
         String metaInfo = "0";
         String path = new File(".").getCanonicalPath() + "\\original\\" + fileName;
         if (!(new File(path).exists()))
-            throw new IllegalArgumentException("Unknown name of file");
+            throw new IllegalArgumentException("Unknown name of file: " + fileName);
         long bytes = Files.size(Paths.get(path));
         metaInfo +=  fileName + ":" + bytes + ":";
         return metaInfo;
@@ -144,7 +144,6 @@ public class Archiver {
             b = input.read();
         }
         intData[0] = Integer.parseInt(tmp);
-        System.out.println(intData[0]);
         tmp = "";
         b = input.read();
 
@@ -161,7 +160,6 @@ public class Archiver {
             b = input.read();
         }
         intData[1] = Integer.parseInt(tmp);
-        System.out.println(intData[1]);
         tmp = "";
         b = input.read();
         for (int i = 0; i < intData[1]; i++) {
@@ -194,7 +192,6 @@ public class Archiver {
 
         for (String file : files) {
             String path = new File(".").getCanonicalPath() + "\\original\\" + file;
-            String fileName;
             if (!(new File(path).exists()))
                 throw new IllegalArgumentException("Unknown name of file");
             final FileInputStream fileInputStream = new FileInputStream(path);
@@ -202,51 +199,17 @@ public class Archiver {
             char tmp = (char)fileInputStream.read();
             while (fileInputStream.available() != 0) {
                 if (tmp == '0') {
-                    if (fileOutputStream != null)
-                        fileOutputStream.close();
-
-                    fileName = "";
-                    int b = fileInputStream.read();
-                    while (b != ':') {
-                        fileName += (char)b;
-                        b = fileInputStream.read();
-                    }
-
-                    path = new File(".").getCanonicalPath() + "\\results\\" + fileName;
-                    fileOutputStream = new FileOutputStream(path);
-
+                    fileOutputStream = createFile(fileOutputStream, fileInputStream);
                     unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
                 } else if (tmp == '1'){
-                    if (fileOutputStream != null)
-                        fileOutputStream.close();
-
-                    fileName = "";
-                    int b = fileInputStream.read();
-                    while (b != ':') {
-                        fileName += (char)b;
-                        b = fileInputStream.read();
-                    }
-
-                    path = new File(".").getCanonicalPath() + "\\results\\" + fileName;
-                    fileOutputStream = new FileOutputStream(path);
+                    fileOutputStream = createFile(fileOutputStream, fileInputStream);
                     unpackWithCompression(fileInputStream, fileOutputStream);
                 } else if (tmp == '2'){
                     unpackWithCompression(fileInputStream, fileOutputStream);
                 } else if (tmp == '3'){
                     unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
                 } else if (tmp == '4') {
-                    if (fileOutputStream != null)
-                        fileOutputStream.close();
-
-                    fileName = "";
-                    int b = fileInputStream.read();
-                    while (b != ':') {
-                        fileName += (char)b;
-                        b = fileInputStream.read();
-                    }
-
-                    path = new File(".").getCanonicalPath() + "\\results\\" + fileName;
-                    fileOutputStream = new FileOutputStream(path);
+                    fileOutputStream = createFile(fileOutputStream, fileInputStream);
                     unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
                 } else if (tmp == '5'){
                     unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
@@ -255,6 +218,24 @@ public class Archiver {
             }
             fileInputStream.close();
         }
+    }
+
+    private static FileOutputStream createFile(FileOutputStream fileOutputStream, FileInputStream fileInputStream) throws IOException {
+        String path;
+        String fileName;
+        if (fileOutputStream != null)
+            fileOutputStream.close();
+
+        fileName = "";
+        int b = fileInputStream.read();
+        while (b != ':') {
+            fileName += (char)b;
+            b = fileInputStream.read();
+        }
+
+        path = new File(".").getCanonicalPath() + "\\results\\" + fileName;
+        fileOutputStream = new FileOutputStream(path);
+        return fileOutputStream;
     }
 
     private static void unpackWithCompression(FileInputStream fileInputStream, FileOutputStream fileOutputStream) throws IOException{
