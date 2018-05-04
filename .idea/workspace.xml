@@ -2,20 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="732a3f91-c885-42ae-a18d-6799eafd5c46" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/src/ru/mirea/HuffmanCompression.java" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/original/1.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/original/123.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/original/Screen.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/original/ref.afk" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/original/res.afk" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/original/temp1.afk" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/original/temp2.afk" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/original/tmp.afk" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/results/1.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/results/123.txt" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/results/screen.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/ru/mirea/Archivator.java" afterPath="$PROJECT_DIR$/src/ru/mirea/Archivator.java" />
+      <change beforePath="$PROJECT_DIR$/src/ru/mirea/Archivator.java" afterPath="$PROJECT_DIR$/src/ru/mirea/Archiver.java" />
+      <change beforePath="$PROJECT_DIR$/src/ru/mirea/HuffmanCompression.java" afterPath="$PROJECT_DIR$/src/ru/mirea/HuffmanCompression.java" />
       <change beforePath="$PROJECT_DIR$/src/ru/mirea/Main.java" afterPath="$PROJECT_DIR$/src/ru/mirea/Main.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -28,11 +17,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Archivator.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archivator.java">
+      <file leaf-file-name="Archiver.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archiver.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-748">
-              <caret line="169" column="28" lean-forward="false" selection-start-line="169" selection-start-column="28" selection-end-line="169" selection-end-column="28" />
+            <state relative-caret-position="238">
+              <caret line="164" column="3" lean-forward="false" selection-start-line="164" selection-start-column="3" selection-end-line="164" selection-end-column="3" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -43,16 +32,14 @@
       <file leaf-file-name="HuffmanCompression.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/ru/mirea/HuffmanCompression.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="224" column="26" lean-forward="false" selection-start-line="224" selection-start-column="26" selection-end-line="224" selection-end-column="26" />
+            <state relative-caret-position="272">
+              <caret line="73" column="0" lean-forward="false" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#408#409#0" expanded="true" />
-                <element signature="e#470#471#0" expanded="true" />
-                <element signature="e#851#852#0" expanded="true" />
-                <element signature="e#931#932#0" expanded="true" />
-                <element signature="e#1232#1233#0" expanded="true" />
-                <element signature="e#1267#1268#0" expanded="true" />
+                <element signature="e#436#437#0" expanded="true" />
+                <element signature="e#498#499#0" expanded="true" />
+                <element signature="e#1263#1264#0" expanded="true" />
+                <element signature="e#1298#1299#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -100,13 +87,13 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/ru/mirea/Archiver.java" />
         <option value="$PROJECT_DIR$/src/ru/mirea/ArithmeticCoding.java" />
         <option value="$PROJECT_DIR$/src/ru/mirea/Haffman.java" />
         <option value="$PROJECT_DIR$/src/ru/mirea/Compression.java" />
         <option value="$PROJECT_DIR$/src/ru/mirea/Main.java" />
-        <option value="$PROJECT_DIR$/src/ru/mirea/HuffmanCompression.java" />
         <option value="$PROJECT_DIR$/src/ru/mirea/Archivator.java" />
+        <option value="$PROJECT_DIR$/src/ru/mirea/HuffmanCompression.java" />
+        <option value="$PROJECT_DIR$/src/ru/mirea/Archiver.java" />
       </list>
     </option>
   </component>
@@ -117,8 +104,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="600" />
-    <option name="y" value="157" />
+    <option name="x" value="93" />
+    <option name="y" value="127" />
     <option name="width" value="1400" />
     <option name="height" value="891" />
   </component>
@@ -253,15 +240,15 @@
       <workItem from="1525068784137" duration="46297000" />
       <workItem from="1525159636493" duration="47916000" />
       <workItem from="1525244784762" duration="31543000" />
-      <workItem from="1525421239546" duration="8034000" />
+      <workItem from="1525421239546" duration="19769000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="178272000" />
+    <option name="totallyTimeSpent" value="190007000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="600" y="157" width="1400" height="891" extended-state="0" />
+    <frame x="93" y="127" width="1400" height="891" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -306,7 +293,7 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archivator.java">
+    <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archiver.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -322,12 +309,10 @@
           <caret line="100" column="31" lean-forward="true" selection-start-line="100" selection-start-column="31" selection-end-line="100" selection-end-column="31" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#408#409#0" expanded="true" />
-            <element signature="e#470#471#0" expanded="true" />
-            <element signature="e#851#852#0" expanded="true" />
-            <element signature="e#931#932#0" expanded="true" />
-            <element signature="e#1232#1233#0" expanded="true" />
-            <element signature="e#1267#1268#0" expanded="true" />
+            <element signature="e#436#437#0" expanded="true" />
+            <element signature="e#498#499#0" expanded="true" />
+            <element signature="e#1263#1264#0" expanded="true" />
+            <element signature="e#1298#1299#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -342,7 +327,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archivator.java">
+    <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archiver.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2737">
           <caret line="162" column="27" lean-forward="false" selection-start-line="162" selection-start-column="27" selection-end-line="162" selection-end-column="27" />
@@ -358,12 +343,10 @@
           <caret line="232" column="37" lean-forward="true" selection-start-line="232" selection-start-column="37" selection-end-line="232" selection-end-column="37" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#408#409#0" expanded="true" />
-            <element signature="e#470#471#0" expanded="true" />
-            <element signature="e#851#852#0" expanded="true" />
-            <element signature="e#931#932#0" expanded="true" />
-            <element signature="e#1232#1233#0" expanded="true" />
-            <element signature="e#1267#1268#0" expanded="true" />
+            <element signature="e#436#437#0" expanded="true" />
+            <element signature="e#498#499#0" expanded="true" />
+            <element signature="e#1263#1264#0" expanded="true" />
+            <element signature="e#1298#1299#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -378,7 +361,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archivator.java">
+    <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archiver.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -394,12 +377,10 @@
           <caret line="85" column="10" lean-forward="false" selection-start-line="85" selection-start-column="10" selection-end-line="85" selection-end-column="10" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#408#409#0" expanded="true" />
-            <element signature="e#470#471#0" expanded="true" />
-            <element signature="e#851#852#0" expanded="true" />
-            <element signature="e#931#932#0" expanded="true" />
-            <element signature="e#1232#1233#0" expanded="true" />
-            <element signature="e#1267#1268#0" expanded="true" />
+            <element signature="e#436#437#0" expanded="true" />
+            <element signature="e#498#499#0" expanded="true" />
+            <element signature="e#1263#1264#0" expanded="true" />
+            <element signature="e#1298#1299#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -414,7 +395,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archivator.java">
+    <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archiver.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1207">
           <caret line="73" column="10" lean-forward="false" selection-start-line="73" selection-start-column="10" selection-end-line="73" selection-end-column="10" />
@@ -435,7 +416,7 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ru/mirea/Compression.java" />
-    <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archivator.java">
+    <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archiver.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -493,24 +474,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/ru/mirea/HuffmanCompression.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="224" column="26" lean-forward="false" selection-start-line="224" selection-start-column="26" selection-end-line="224" selection-end-column="26" />
+        <state relative-caret-position="272">
+          <caret line="73" column="0" lean-forward="false" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#408#409#0" expanded="true" />
-            <element signature="e#470#471#0" expanded="true" />
-            <element signature="e#851#852#0" expanded="true" />
-            <element signature="e#931#932#0" expanded="true" />
-            <element signature="e#1232#1233#0" expanded="true" />
-            <element signature="e#1267#1268#0" expanded="true" />
+            <element signature="e#436#437#0" expanded="true" />
+            <element signature="e#498#499#0" expanded="true" />
+            <element signature="e#1263#1264#0" expanded="true" />
+            <element signature="e#1298#1299#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archivator.java">
+    <entry file="file://$PROJECT_DIR$/src/ru/mirea/Archiver.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-748">
-          <caret line="169" column="28" lean-forward="false" selection-start-line="169" selection-start-column="28" selection-end-line="169" selection-end-column="28" />
+        <state relative-caret-position="238">
+          <caret line="164" column="3" lean-forward="false" selection-start-line="164" selection-start-column="3" selection-end-line="164" selection-end-column="3" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

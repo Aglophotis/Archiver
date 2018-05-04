@@ -10,12 +10,12 @@ public class Main {
     public static void main(String[] args) throws IOException {
         boolean[] flags = new boolean[2];
         ArrayList<String> files = new ArrayList<>();
-        Archivator.checkCommandLine(args, flags, files);
+        Archiver.checkCommandLine(args, flags, files);
 
         if (flags[0])
-            Archivator.pack(files);
+            Archiver.pack(files);
         else
-            Archivator.unpack(files);
+            Archiver.unpack(files);
         //for (int i = 0; i < 10; i++)
         //    HuffmanCompression.compression("ffhhgyffhgg");
     }
