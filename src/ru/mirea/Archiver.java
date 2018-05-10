@@ -6,55 +6,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Archiver {
-    private static boolean isPack = false;
-
     private final static int BUFFER_SIZE_UNPACK = 64000;
     private final static int BUFFER_SIZE_PACK = 64000;
 
-    public static void checkCommandLine(String[] args, boolean[] flags, ArrayList<String> files) {
-        int flagsQuantity = 0;
-        while (args[flagsQuantity].charAt(0) == '-') {
-            switch (args[flagsQuantity]) {
-                case "-pack":
-                    flags[0] = true;
-                    break;
-                case "-unpack":
-                    flags[0] = false;
-                    break;
-                case "-compression":
-                    flags[1] = true;
-                    isPack = true;
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid flag: " + args[flagsQuantity]);
-            }
-            flagsQuantity++;
-        }
-
-        if (flagsQuantity == 0) {
-            throw new IllegalArgumentException("incorrect number of flags");
-        }
-
-        if ((flags[0] && args.length - flagsQuantity - 1 > 0) || (!flags[0] && args.length - flagsQuantity > 0)) {
-            for (int i = flagsQuantity; i < args.length; i++) {
-                files.add(args[i]);
-            }
-        } else {
-            throw new IllegalArgumentException("incorrect number of files");
-        }
-    }
-
-    private static String getInfo(String fileName) throws IOException {
-        String metaInfo = "0";
-        String path = new File(".").getCanonicalPath() + "\\original\\" + fileName;
-        if (!(new File(path).exists()))
-            throw new IllegalArgumentException("Unknown name of file: " + fileName);
-        long bytes = Files.size(Paths.get(path));
-        metaInfo +=  fileName + ":" + bytes + ":";
-        return metaInfo;
-    }
-
-    public static void pack(ArrayList<String> files) throws IOException {
+    public static void pack(ArrayList<String> files, boolean isPack) throws IOException{
         final byte[] bytes = new byte[BUFFER_SIZE_PACK];
         int quantitySymbols;
         String path = new File(".").getCanonicalPath() + "\\original\\" + files.get(files.size() - 1) + ".afk";
@@ -134,6 +89,17 @@ public class Archiver {
             }
             fileOutputStream.close();
         }
+    }
+
+
+    private static String getInfo(String fileName) throws IOException {
+        String metaInfo = "0";
+        String path = new File(".").getCanonicalPath() + "\\original\\" + fileName;
+        if (!(new File(path).exists()))
+            throw new IllegalArgumentException("Unknown name of file: " + fileName);
+        long bytes = Files.size(Paths.get(path));
+        metaInfo +=  fileName + ":" + bytes + ":";
+        return metaInfo;
     }
 
     private static void getInfo(FileInputStream input, String[] strData, int[] intData) throws IOException {

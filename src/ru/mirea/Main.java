@@ -6,18 +6,20 @@ import java.util.Random;
 
 public class Main {
     private static Random r = new Random();
+    private static long startTime = System.currentTimeMillis();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         boolean[] flags = new boolean[2];
         ArrayList<String> files = new ArrayList<>();
-        Archiver.checkCommandLine(args, flags, files);
+        HandlerCommandLine.checkCommandLine(args, flags, files);
 
         if (flags[0])
-            Archiver.pack(files);
+            Archiver.pack(files, flags[1]);
         else
             Archiver.unpack(files);
-        //for (int i = 0; i < 10; i++)
-        //    HuffmanCompression.compression("ffhhgyffhgg");
+
+        long timeSpent = System.currentTimeMillis() - startTime;
+        System.out.println(timeSpent);
     }
 
     private static String generateString(int size){
