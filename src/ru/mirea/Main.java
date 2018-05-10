@@ -8,15 +8,15 @@ public class Main {
     private static Random r = new Random();
     private static long startTime = System.currentTimeMillis();
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         boolean[] flags = new boolean[2];
         ArrayList<String> files = new ArrayList<>();
         HandlerCommandLine.checkCommandLine(args, flags, files);
 
         if (flags[0])
-            Archiver.pack(files, flags[1]);
+            Packer.pack(files, flags[1]);
         else
-            Archiver.unpack(files);
+            Unpacker.unpack(files);
 
         long timeSpent = System.currentTimeMillis() - startTime;
         System.out.println(timeSpent);
