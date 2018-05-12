@@ -158,9 +158,8 @@ public class Unpacker {
 
     private static void unpackRepeat(FileInputStream fileInputStream, FileOutputStream fileOutputStream, int BUFFER_SIZE) throws IOException {
         int sizeFile = getInfo(fileInputStream);
-        int quantitySymbols;
         byte[] buffer = new byte[BUFFER_SIZE];
-        if ((quantitySymbols = fileInputStream.read(buffer, 0, 1)) == -1){
+        if ((fileInputStream.read(buffer, 0, 1)) == -1){
             throw new IOException("5/6Archive is bit");
         }
         for (int i = 0; i < sizeFile; i++)

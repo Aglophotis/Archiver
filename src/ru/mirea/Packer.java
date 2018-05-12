@@ -18,8 +18,6 @@ public class Packer {
     public static void pack(ArrayList<String> files, boolean isPack) throws IOException, InterruptedException {
         final byte[] bytes = new byte[BUFFER_SIZE_PACK];
         int quantitySymbols;
-        BlockingQueue<BlockProperties> qIn = new LinkedBlockingQueue<>();
-        PriorityQueue<BlockProperties> qOut = new PriorityQueue<>();
         String path = new File(".").getCanonicalPath() + "\\original\\" + files.get(files.size() - 1) + ".afk";
         FileOutputStream fileOutputStream = new FileOutputStream(path);
 
@@ -40,11 +38,14 @@ public class Packer {
             for (int i = 0; i < files.size() - 1; i++) {
                 path = new File(".").getCanonicalPath() + "\\original\\" + files.get(i);
                 FileInputStream fileInputStream = new FileInputStream(path);
+                BlockingQueue<BlockProperties> qIn = new LinkedBlockingQueue<>();
+                PriorityQueue<BlockProperties> qOut = new PriorityQueue<>();
+                globalPriority = 0;
 
                 String fileName = files.get(i) + ":";
 
                 BlockPacker packer = new BlockPacker(qIn, qOut);
-                Printer printer = new Printer(10, qOut, fileOutputStream);
+                Printer printer = new Printer(1, qOut, fileOutputStream);
 
                 Thread thread1 = new Thread(packer);
                 Thread thread2 = new Thread(packer);
@@ -64,22 +65,29 @@ public class Packer {
                 threadPrinter.start();
 
                 while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE_PACK)) > 0) {
-                    char[] characters = new char[quantitySymbols];
+                    char[] tmpChar = new char[quantitySymbols];
+                    byte[] byteBlock = new byte[quantitySymbols];
                     for (int j = 0; j < quantitySymbols; j++) {
-                        characters[j] = (char) bytes[j];
+                        tmpChar[j] = (char) bytes[j];
+                        byteBlock[j] = bytes[j];
                     }
-                    qIn.put(new BlockProperties(new String(characters), bytes, fileName));
+
+                    String strBlock = new String(tmpChar);
+                    qIn.put(new BlockProperties(fileName, quantitySymbols, strBlock, byteBlock));
                     fileName = "";
                 }
+
 
                 while (!qIn.isEmpty()){
                     Thread.sleep(5);
                 }
                 packer.close();
 
+
                 for (int j = 0; j < 6; j++){
-                    qIn.put(new BlockProperties("-1", bytes, "-1"));
+                    qIn.put(new BlockProperties("-1", -1, "-1", bytes));
                 }
+
 
                 thread1.join();
                 thread2.join();
@@ -93,6 +101,8 @@ public class Packer {
                 }
                 printer.close();
 
+                threadPrinter.join();
+
                 fileInputStream.close();
             }
             fileOutputStream.close();
@@ -100,17 +110,19 @@ public class Packer {
     }
 
     private static class BlockProperties implements Comparable<BlockProperties>{
-        private String strBlock;
-        private byte[] byteBlock;
         private String fileName;
         private String meta;
         private byte[] byteBlockResult;
+        private int length;
         private int priority;
+        private String strBlock;
+        private byte[] byteBlock;
 
-        BlockProperties(String strBlock, byte[] byteBlock, String fileName){
+        BlockProperties(String fileName, int length, String strBlock, byte[] byteBlock){
+            this.fileName = fileName;
+            this.length = length;
             this.strBlock = strBlock;
             this.byteBlock = byteBlock;
-            this.fileName = fileName;
         }
 
         public int compareTo(BlockProperties block) {
@@ -146,45 +158,30 @@ public class Packer {
                         continue;
 
                     String s2 = Compressor.compression(block.strBlock);
+                    String meta;
 
                     if (s2.equals("-1")) {
-                        String meta;
-                        if (block.fileName.length() != 0){
-                            meta = "0" + block.fileName + block.strBlock.length() + ":";
-                        } else {
-                            meta = "3" + block.strBlock.length() + ":";
-                        }
-
+                        meta = (block.fileName.length() != 0) ? ("0" + block.fileName + block.length + ":") : ("3" + block.length + ":");
                         block.meta = meta;
                         block.byteBlockResult = block.byteBlock;
+                        block.length = block.strBlock.length();
                         synchronized (qOut) {
                             qOut.add(block);
                         }
                         continue;
                     }
-                    if (s2.equals("-2")) {
-                        String meta;
-                        if (block.fileName.length() != 0){
-                            meta = "4" + block.fileName + block.strBlock.length() + ":";
-                        } else{
-                            meta = "5" + block.strBlock.length() + ":";
-                        }
 
+                    if (s2.equals("-2")) {
+                        meta = (block.fileName.length() != 0) ? ("4" + block.fileName + block.length  + ":") : ("5" + block.length + ":");
                         block.meta = meta;
                         byte[] tmpByte = new byte[1];
                         tmpByte[0] = block.byteBlock[0];
                         block.byteBlockResult = tmpByte;
+                        block.length = 1;
                         synchronized (qOut) {
                             qOut.add(block);
                         }
                         continue;
-                    }
-
-                    String meta;
-                    if (block.fileName.length() != 0){
-                        meta = "1" + block.fileName;
-                    } else{
-                        meta = "2";
                     }
 
                     char[] characters;
@@ -194,8 +191,10 @@ public class Packer {
                         tmpBytes[j] = (byte) characters[j];
                     }
 
+                    meta = (block.fileName.length() != 0) ? ("1" + block.fileName) : "2";
                     block.meta = meta;
                     block.byteBlockResult = tmpBytes;
+                    block.length = characters.length;
                     synchronized (qOut) {
                         qOut.add(block);
                     }
@@ -232,7 +231,7 @@ public class Packer {
                             if (qOut.peek().priority == priority) {
                                 BlockProperties block = qOut.poll();
                                 fileOutputStream.write(block.meta.getBytes(), 0, block.meta.length());
-                                fileOutputStream.write(block.byteBlockResult, 0, block.byteBlockResult.length);
+                                fileOutputStream.write(block.byteBlockResult, 0, block.length);
                                 ++priority;
                             }
                         }
