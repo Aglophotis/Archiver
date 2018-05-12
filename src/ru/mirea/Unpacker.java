@@ -6,6 +6,40 @@ import java.util.ArrayList;
 public class Unpacker {
     private final static int BUFFER_SIZE_UNPACK = 64000;
 
+    public static void unpack(ArrayList<String> files) throws IOException {
+        FileOutputStream fileOutputStream = null;
+
+        for (String file : files) {
+            String path = new File(".").getCanonicalPath() + "\\original\\" + file;
+            if (!(new File(path).exists()))
+                throw new IllegalArgumentException("Unknown name of file");
+            final FileInputStream fileInputStream = new FileInputStream(path);
+
+            char tmp = (char)fileInputStream.read();
+            while (fileInputStream.available() != 0) {
+                if (tmp == '0') {
+                    fileOutputStream = createFile(fileOutputStream, fileInputStream);
+                    unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+                } else if (tmp == '1'){
+                    fileOutputStream = createFile(fileOutputStream, fileInputStream);
+                    unpackWithCompression(fileInputStream, fileOutputStream);
+                } else if (tmp == '2'){
+                    unpackWithCompression(fileInputStream, fileOutputStream);
+                } else if (tmp == '3'){
+                    unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+                } else if (tmp == '4') {
+                    fileOutputStream = createFile(fileOutputStream, fileInputStream);
+                    unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+                } else if (tmp == '5'){
+                    unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+                }
+                tmp = (char)fileInputStream.read();
+            }
+            fileInputStream.close();
+        }
+    }
+
+
     private static void getInfo(FileInputStream input, String[] strData, int[] intData) throws IOException {
         String tmp = "";
         int b = input.read();
@@ -55,39 +89,6 @@ public class Unpacker {
             b = input.read();
         }
         return Integer.parseInt(tmp);
-    }
-
-    public static void unpack(ArrayList<String> files) throws IOException {
-        FileOutputStream fileOutputStream = null;
-
-        for (String file : files) {
-            String path = new File(".").getCanonicalPath() + "\\original\\" + file;
-            if (!(new File(path).exists()))
-                throw new IllegalArgumentException("Unknown name of file");
-            final FileInputStream fileInputStream = new FileInputStream(path);
-
-            char tmp = (char)fileInputStream.read();
-            while (fileInputStream.available() != 0) {
-                if (tmp == '0') {
-                    fileOutputStream = createFile(fileOutputStream, fileInputStream);
-                    unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
-                } else if (tmp == '1'){
-                    fileOutputStream = createFile(fileOutputStream, fileInputStream);
-                    unpackWithCompression(fileInputStream, fileOutputStream);
-                } else if (tmp == '2'){
-                    unpackWithCompression(fileInputStream, fileOutputStream);
-                } else if (tmp == '3'){
-                    unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
-                } else if (tmp == '4') {
-                    fileOutputStream = createFile(fileOutputStream, fileInputStream);
-                    unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
-                } else if (tmp == '5'){
-                    unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
-                }
-                tmp = (char)fileInputStream.read();
-            }
-            fileInputStream.close();
-        }
     }
 
     private static FileOutputStream createFile(FileOutputStream fileOutputStream, FileInputStream fileInputStream) throws IOException {

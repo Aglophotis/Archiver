@@ -122,7 +122,7 @@ public class Compressor {
         return result.toString();
     }
 
-    private static StringBuilder bitsToString(String binaryBlock){
+    public static StringBuilder bitsToString(String binaryBlock){
         int codeSet = 8;
         StringBuilder charsetBytes = new StringBuilder();
         int charByte = 0;

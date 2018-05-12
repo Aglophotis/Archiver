@@ -55,16 +55,15 @@ public class Decompressor {
         StringBuilder binarySequence = new StringBuilder();
         StringBuilder result = new StringBuilder();
         int sizeFirstByte = block.charAt(block.length() - 1) - '0';
-
-        String tmpStr = Integer.toBinaryString(block.charAt(0));
+        int firstByte = (block.charAt(0) > 127) ? (256 + (byte)block.charAt(0)): (int)block.charAt(0);
+        String tmpStr = Integer.toBinaryString(firstByte);
         while (binarySequence.length() + tmpStr.length() +sizeFirstByte < 8)
             binarySequence.append("0");
         binarySequence.append(tmpStr);
 
         for (int i = 1; i < block.length() - 1; i++){
-            String str1;
             int tmpByte = (block.charAt(i) > 127) ? (256 + (byte)block.charAt(i)): (int)block.charAt(i);
-            str1 = Integer.toBinaryString(tmpByte);
+            String str1 = Integer.toBinaryString(tmpByte);
             StringBuilder str2 = new StringBuilder();
             while (str1.length() + str2.length() < 8){
                 str2.append("0");

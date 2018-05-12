@@ -8,7 +8,7 @@ public class Main {
     private static Random r = new Random();
     private static long startTime = System.currentTimeMillis();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         boolean[] flags = new boolean[2];
         ArrayList<String> files = new ArrayList<>();
         HandlerCommandLine.checkCommandLine(args, flags, files);
@@ -17,6 +17,8 @@ public class Main {
             Packer.pack(files, flags[1]);
         else
             Unpacker.unpack(files);
+
+        //Encryptor.encryption("1234567890", "testing.afk");
 
         long timeSpent = System.currentTimeMillis() - startTime;
         System.out.println(timeSpent);
