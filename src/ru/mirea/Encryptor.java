@@ -9,49 +9,45 @@ import java.util.PriorityQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class Encryptor {
+public class Encryptor extends Cryptor{
     private final static int BUFFER_SIZE = 64000;
     private static Integer globalPriority = 0;
 
     public static void encryption(String password, String filename) throws IOException, InterruptedException {
-        ArrayList<Integer> lengthSubblock = new ArrayList<>();
+        ArrayList<Integer> lengthSubblock = createSizeBlock(password);
         BlockingQueue<BlockProperties> qIn = new LinkedBlockingQueue<>();
         PriorityQueue<BlockProperties> qOut = new PriorityQueue<>();
-
         byte[] bytes = new byte[BUFFER_SIZE];
         int quantitySymbols;
-        for (int i = 0; i < password.length(); i++){
-            int tmp = (byte)password.charAt(i);
-            if (tmp < 15 && tmp > 0)
-                throw new IOException("Incorrect password");
-            if (tmp > 0)
-                lengthSubblock.add(tmp);
-            else
-                lengthSubblock.add(256 + tmp);
-        }
+        globalPriority = 0;
 
-        String path = new File(".").getCanonicalPath() + "\\original\\" + filename;
-        if (!(new File(path).exists()))
+        String path1 = new File(".").getCanonicalPath() + "\\original\\" + filename + ".afk";
+        if (!(new File(path1).exists()))
             throw new IllegalArgumentException("Unknown name of file");
-        final FileInputStream fileInputStream = new FileInputStream(path);
-        path = new File(".").getCanonicalPath() + "\\original\\" + filename + "enc";
-        final FileOutputStream fileOutputStream = new FileOutputStream(path);
+        final FileInputStream fileInputStream = new FileInputStream(path1);
+
+        String path2 = new File(".").getCanonicalPath() + "\\original\\" + filename + "enc";
+        final FileOutputStream fileOutputStream = new FileOutputStream(path2);
 
         BlockEncryptor blockEncryptor = new BlockEncryptor(qIn, qOut, lengthSubblock);
+        Printer printer = new Printer(1, qOut, fileOutputStream);
         Thread thread1 = new Thread(blockEncryptor);
         Thread thread2 = new Thread(blockEncryptor);
         Thread thread3 = new Thread(blockEncryptor);
         Thread thread4 = new Thread(blockEncryptor);
+        Thread threadPrinter = new Thread(printer);
 
 
         thread1.start();
         thread2.start();
         thread3.start();
         thread4.start();
+        threadPrinter.start();
 
 
         while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE)) > 0){
-            qIn.put(new BlockProperties(quantitySymbols, bytes));
+            byte[] tmpBytes = bytes.clone();
+            qIn.put(new BlockProperties(quantitySymbols, tmpBytes));
         }
 
         while (!qIn.isEmpty()){
@@ -68,28 +64,24 @@ public class Encryptor {
         thread3.join();
         thread4.join();
 
-        int qSize = qOut.size();
-        for (int j = 0; j < qSize; j++){
-            BlockProperties block = qOut.poll();
-            fileOutputStream.write(block.bytes, 0, block.length);
+        while (!qOut.isEmpty()){
+            Thread.sleep(1);
         }
+        printer.close();
+
+        threadPrinter.join();
 
         fileInputStream.close();
         fileOutputStream.close();
-    }
 
-    private static class BlockProperties implements Comparable<BlockProperties>{
-        private int length;
-        private byte[] bytes;
-        private int priority;
-
-        BlockProperties(int length, byte[] bytes){
-            this.length = length;
-            this.bytes = bytes;
+        File fileOriginal = new File(path1);
+        if (!fileOriginal.delete()){
+            throw new IOException("file cannot be deleted");
         }
 
-        public int compareTo(BlockProperties block) {
-            return priority - block.priority;
+        File fileEncryption = new File(path2);
+        if (!fileEncryption.renameTo(new File(path1))){
+            throw new IOException("file cannot be renamed");
         }
     }
 
@@ -121,17 +113,8 @@ public class Encryptor {
                     if (block.length == -1)
                         continue;
 
-                    StringBuilder binarySequence = new StringBuilder();
-                    for (int i = 0; i < block.length; i++) {
-                        int tmpByte = (block.bytes[i] < 0) ? (256 + block.bytes[i]) : block.bytes[i];
-                        String str1 = Integer.toBinaryString(tmpByte);
-                        StringBuilder str2 = new StringBuilder();
-                        while (str1.length() + str2.length() < 8) {
-                            str2.append("0");
-                        }
-                        binarySequence.append(str2.append(str1));
-                    }
-                    StringBuilder reverseSequence = encrypt(binarySequence, lengthSubblock);
+                    StringBuilder binarySequence = byteToStr(block.length, block.bytes);
+                    StringBuilder reverseSequence = crypt(binarySequence, lengthSubblock).reverse();
                     StringBuilder result = Compressor.bitsToString(reverseSequence.toString());
                     char[] characters = result.toString().toCharArray();
                     byte[] tmpBytes = new byte[characters.length];
@@ -153,27 +136,5 @@ public class Encryptor {
         void close(){
             isThreadActive = false;
         }
-    }
-
-    private static StringBuilder encrypt(StringBuilder binarySequence, ArrayList<Integer> lengthSubblock){
-        int i = 0;
-        int k = 0;
-        StringBuilder reverseSequence = new StringBuilder();
-        while (i < binarySequence.length()){
-            StringBuilder tmpStr = new StringBuilder();
-            if (i + lengthSubblock.get(k % lengthSubblock.size()) < binarySequence.length()) {
-                for (int j = 0; j < lengthSubblock.get(k % lengthSubblock.size()); ++j, ++i) {
-                    tmpStr.append(binarySequence.charAt(i));
-                }
-            }
-            else {
-                for (int j = i; j < binarySequence.length(); j++, i++){
-                    tmpStr.append(binarySequence.charAt(i));
-                }
-            }
-            ++k;
-            reverseSequence.append(tmpStr.reverse());
-        }
-        return reverseSequence.reverse();
     }
 }

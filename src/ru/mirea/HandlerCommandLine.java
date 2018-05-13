@@ -3,7 +3,7 @@ package ru.mirea;
 import java.util.ArrayList;
 
 public class HandlerCommandLine {
-    public static void checkCommandLine(String[] args, boolean[] flags, ArrayList<String> files) {
+    public static void checkCommandLine(String[] args, boolean[] flags, ArrayList<String> files, StringBuilder password) {
         int flagsQuantity = 0;
         while (args[flagsQuantity].charAt(0) == '-') {
             switch (args[flagsQuantity]) {
@@ -16,14 +16,24 @@ public class HandlerCommandLine {
                 case "-compression":
                     flags[1] = true;
                     break;
+                case "-crypt":
+                    flags[2] = true;
+                    break;
                 default:
                     throw new IllegalArgumentException("Invalid flag: " + args[flagsQuantity]);
             }
-            flagsQuantity++;
+            ++flagsQuantity;
         }
 
         if (flagsQuantity == 0) {
             throw new IllegalArgumentException("incorrect number of flags");
+        }
+
+        if (flags[2]){
+            if (flagsQuantity == args.length - 1)
+                throw new IllegalArgumentException("incorrect number of files");
+            password.append(args[flagsQuantity]);
+            ++flagsQuantity;
         }
 
         if ((flags[0] && args.length - flagsQuantity - 1 > 0) || (!flags[0] && args.length - flagsQuantity > 0)) {

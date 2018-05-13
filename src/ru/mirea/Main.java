@@ -9,16 +9,31 @@ public class Main {
     private static long startTime = System.currentTimeMillis();
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        boolean[] flags = new boolean[2];
+        boolean[] flags = new boolean[3];
         ArrayList<String> files = new ArrayList<>();
-        HandlerCommandLine.checkCommandLine(args, flags, files);
+        StringBuilder password = new StringBuilder();
+        HandlerCommandLine.checkCommandLine(args, flags, files, password);
 
-        if (flags[0])
+        if (flags[0]) {
             Packer.pack(files, flags[1]);
-        else
-            Unpacker.unpack(files);
+            if (flags[2]) {
+                Encryptor.encryption(password.toString(), files.get(files.size() - 1));
+            }
+        }
+        else {
+            if (flags[2]){
+                for (String item: files) {
+                    Decryptor.decryption(password.toString(), item);
+                    Unpacker.unpack(item + "dec");
+                }
+            }
+            else {
+                for (String item: files) {
+                    Unpacker.unpack(item);
+                }
+            }
+        }
 
-        //Encryptor.encryption("1234567890", "testing.afk");
 
         long timeSpent = System.currentTimeMillis() - startTime;
         System.out.println(timeSpent);

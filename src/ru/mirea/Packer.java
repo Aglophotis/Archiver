@@ -65,8 +65,8 @@ public class Packer {
                 threadPrinter.start();
 
                 while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE_PACK)) > 0) {
+                    byte[] byteBlock = bytes.clone();
                     char[] tmpChar = new char[quantitySymbols];
-                    byte[] byteBlock = new byte[quantitySymbols];
                     for (int j = 0; j < quantitySymbols; j++) {
                         tmpChar[j] = (char) bytes[j];
                         byteBlock[j] = bytes[j];

@@ -1,15 +1,15 @@
 package ru.mirea;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+
 import java.io.*;
-import java.util.ArrayList;
 
 public class Unpacker {
     private final static int BUFFER_SIZE_UNPACK = 64000;
 
-    public static void unpack(ArrayList<String> files) throws IOException {
+    public static void unpack(String file) throws IOException {
         FileOutputStream fileOutputStream = null;
 
-        for (String file : files) {
             String path = new File(".").getCanonicalPath() + "\\original\\" + file;
             if (!(new File(path).exists()))
                 throw new IllegalArgumentException("Unknown name of file");
@@ -32,53 +32,47 @@ public class Unpacker {
                     unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
                 } else if (tmp == '5'){
                     unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+                } else {
+                    throw new IOException("unpack: Archive is bit");
                 }
                 tmp = (char)fileInputStream.read();
             }
             fileInputStream.close();
-        }
     }
 
 
     private static void getInfo(FileInputStream input, String[] strData, int[] intData) throws IOException {
-        String tmp = "";
+        StringBuilder tmp = new StringBuilder();
+
         int b = input.read();
         while (b != ':') {
-            tmp += (char)b;
+            if (!Character.isDigit((char)b))
+                throw new IOException("meta: Archive is bit");
+            tmp.append((char)b);
             b = input.read();
         }
-        intData[0] = Integer.parseInt(tmp);
-        tmp = "";
-        b = input.read();
+        intData[0] = Integer.parseInt(tmp.toString());
+        tmp.delete(0, tmp.length());
 
-        for (int i = 0; i < intData[0]; i++) {
-            tmp += (char)b;
+        for (int j = 1; j < 3; j++) {
             b = input.read();
-        }
-        strData[1] = tmp;
-        tmp = "";
-        b = input.read();
+            for (int i = 0; i < intData[j-1]; i++) {
+                tmp.append((char) b);
+                b = input.read();
+            }
+            strData[j] = tmp.toString();
+            tmp.delete(0, tmp.length());
+            b = input.read();
 
-        while (b != ':') {
-            tmp += (char)b;
-            b = input.read();
+            while (b != ':') {
+                if (!Character.isDigit((char)b))
+                    throw new IOException("meta: Archive is bit");
+                tmp.append((char)b);
+                b = input.read();
+            }
+            intData[j] = Integer.parseInt(tmp.toString());
+            tmp.delete(0, tmp.length());
         }
-        intData[1] = Integer.parseInt(tmp);
-        tmp = "";
-        b = input.read();
-        for (int i = 0; i < intData[1]; i++) {
-            tmp += (char)b;
-            b = input.read();
-        }
-        strData[2] = tmp;
-        tmp = "";
-        b = input.read();
-
-        while (b != ':') {
-            tmp += (char)b;
-            b = input.read();
-        }
-        intData[2] = Integer.parseInt(tmp);
     }
 
     private static int getInfo(FileInputStream input) throws IOException {
@@ -160,7 +154,7 @@ public class Unpacker {
         int sizeFile = getInfo(fileInputStream);
         byte[] buffer = new byte[BUFFER_SIZE];
         if ((fileInputStream.read(buffer, 0, 1)) == -1){
-            throw new IOException("5/6Archive is bit");
+            throw new IOException("unpackRepeat: Archive is bit");
         }
         for (int i = 0; i < sizeFile; i++)
             buffer[i] = buffer[0];
