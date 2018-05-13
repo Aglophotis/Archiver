@@ -1,7 +1,5 @@
 package ru.mirea;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-
 import java.io.*;
 
 public class Unpacker {
@@ -33,6 +31,7 @@ public class Unpacker {
                 } else if (tmp == '5'){
                     unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
                 } else {
+                    fileInputStream.close();
                     throw new IOException("unpack: Archive is bit");
                 }
                 tmp = (char)fileInputStream.read();
@@ -41,34 +40,38 @@ public class Unpacker {
     }
 
 
-    private static void getInfo(FileInputStream input, String[] strData, int[] intData) throws IOException {
+    private static void getInfo(FileInputStream fileInputStream, String[] strData, int[] intData) throws IOException {
         StringBuilder tmp = new StringBuilder();
 
-        int b = input.read();
+        int b = fileInputStream.read();
         while (b != ':') {
-            if (!Character.isDigit((char)b))
+            if (!Character.isDigit((char)b)) {
+                fileInputStream.close();
                 throw new IOException("meta: Archive is bit");
+            }
             tmp.append((char)b);
-            b = input.read();
+            b = fileInputStream.read();
         }
         intData[0] = Integer.parseInt(tmp.toString());
         tmp.delete(0, tmp.length());
 
         for (int j = 1; j < 3; j++) {
-            b = input.read();
+            b = fileInputStream.read();
             for (int i = 0; i < intData[j-1]; i++) {
                 tmp.append((char) b);
-                b = input.read();
+                b = fileInputStream.read();
             }
             strData[j] = tmp.toString();
             tmp.delete(0, tmp.length());
-            b = input.read();
+            b = fileInputStream.read();
 
             while (b != ':') {
-                if (!Character.isDigit((char)b))
+                if (!Character.isDigit((char)b)) {
+                    fileInputStream.close();
                     throw new IOException("meta: Archive is bit");
+                }
                 tmp.append((char)b);
-                b = input.read();
+                b = fileInputStream.read();
             }
             intData[j] = Integer.parseInt(tmp.toString());
             tmp.delete(0, tmp.length());
@@ -154,6 +157,7 @@ public class Unpacker {
         int sizeFile = getInfo(fileInputStream);
         byte[] buffer = new byte[BUFFER_SIZE];
         if ((fileInputStream.read(buffer, 0, 1)) == -1){
+            fileInputStream.close();
             throw new IOException("unpackRepeat: Archive is bit");
         }
         for (int i = 0; i < sizeFile; i++)

@@ -86,7 +86,7 @@ public class Compressor {
         StringBuilder codeTree = new StringBuilder();
         StringBuilder meta = new StringBuilder();
         bytes = encode(block, root);
-        getMeta(root, bytes, meta, codeTree);
+        getInfo(root, bytes, meta, codeTree);
         codeTree = changeTree(codeTree);
         result.append(meta.length() + ":" + meta + ":" + bitsToString(codeTree.toString()).length()
                 + ":" + bitsToString(codeTree.toString()) + ":" + (bytes.length()) + ":");
@@ -173,7 +173,7 @@ public class Compressor {
         code.deleteCharAt(code.length() - 1);
     }
 
-    private static void getMeta(Node current, StringBuilder code, StringBuilder alphabet, StringBuilder tree) {
+    private static void getInfo(Node current, StringBuilder code, StringBuilder alphabet, StringBuilder tree) {
         if (current.character != null) {
             if (current.character > 127){
                 char tmp = current.character;
@@ -185,10 +185,10 @@ public class Compressor {
                 alphabet.append(current.character);
         } else {
             tree.append("1");
-            getMeta(current.leftChild, code.append('0'), alphabet, tree);
+            getInfo(current.leftChild, code.append('0'), alphabet, tree);
             code.deleteCharAt(code.length() - 1);
             tree.append("01");
-            getMeta(current.rightChild, code.append('1'), alphabet, tree);
+            getInfo(current.rightChild, code.append('1'), alphabet, tree);
             code.deleteCharAt(code.length() - 1);
             tree.append("0");
         }

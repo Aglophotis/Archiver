@@ -66,14 +66,8 @@ public class Packer {
 
                 while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE_PACK)) > 0) {
                     byte[] byteBlock = bytes.clone();
-                    char[] tmpChar = new char[quantitySymbols];
-                    for (int j = 0; j < quantitySymbols; j++) {
-                        tmpChar[j] = (char) bytes[j];
-                        byteBlock[j] = bytes[j];
-                    }
 
-                    String strBlock = new String(tmpChar);
-                    qIn.put(new BlockProperties(fileName, quantitySymbols, strBlock, byteBlock));
+                    qIn.put(new BlockProperties(fileName, quantitySymbols, byteBlock));
                     fileName = "";
                 }
 
@@ -85,7 +79,7 @@ public class Packer {
 
 
                 for (int j = 0; j < 6; j++){
-                    qIn.put(new BlockProperties("-1", -1, "-1", bytes));
+                    qIn.put(new BlockProperties("-1", -1, bytes));
                 }
 
 
@@ -112,16 +106,13 @@ public class Packer {
     private static class BlockProperties implements Comparable<BlockProperties>{
         private String fileName;
         private String meta;
-        private byte[] byteBlockResult;
         private int length;
         private int priority;
-        private String strBlock;
         private byte[] byteBlock;
 
-        BlockProperties(String fileName, int length, String strBlock, byte[] byteBlock){
+        BlockProperties(String fileName, int length, byte[] byteBlock){
             this.fileName = fileName;
             this.length = length;
-            this.strBlock = strBlock;
             this.byteBlock = byteBlock;
         }
 
@@ -157,14 +148,18 @@ public class Packer {
                     if ("-1".equals(block.fileName))
                         continue;
 
-                    String s2 = Compressor.compression(block.strBlock);
+                    char[] tmpChar = new char[block.length];
+                    for (int j = 0; j < block.length; j++) {
+                        tmpChar[j] = (char) block.byteBlock[j];
+                    }
+                    String strBlock = new String(tmpChar);
+
+                    String s2 = Compressor.compression(strBlock);
                     String meta;
 
                     if (s2.equals("-1")) {
                         meta = (block.fileName.length() != 0) ? ("0" + block.fileName + block.length + ":") : ("3" + block.length + ":");
                         block.meta = meta;
-                        block.byteBlockResult = block.byteBlock;
-                        block.length = block.strBlock.length();
                         synchronized (qOut) {
                             qOut.add(block);
                         }
@@ -176,7 +171,6 @@ public class Packer {
                         block.meta = meta;
                         byte[] tmpByte = new byte[1];
                         tmpByte[0] = block.byteBlock[0];
-                        block.byteBlockResult = tmpByte;
                         block.length = 1;
                         synchronized (qOut) {
                             qOut.add(block);
@@ -193,7 +187,7 @@ public class Packer {
 
                     meta = (block.fileName.length() != 0) ? ("1" + block.fileName) : "2";
                     block.meta = meta;
-                    block.byteBlockResult = tmpBytes;
+                    block.byteBlock = tmpBytes;
                     block.length = characters.length;
                     synchronized (qOut) {
                         qOut.add(block);
@@ -231,7 +225,7 @@ public class Packer {
                             if (qOut.peek().priority == priority) {
                                 BlockProperties block = qOut.poll();
                                 fileOutputStream.write(block.meta.getBytes(), 0, block.meta.length());
-                                fileOutputStream.write(block.byteBlockResult, 0, block.length);
+                                fileOutputStream.write(block.byteBlock, 0, block.length);
                                 ++priority;
                             }
                         }
