@@ -1,10 +1,9 @@
-package ru.mirea.archiver;
+package ru.mirea.data;
 
 import java.io.IOException;
 
-public class Decompressor {
-
-    private static Node createTree(String alphabet, StringBuilder tree) throws IOException {
+public class DecompressorImpl implements Decompressor {
+    private Node createTree(String alphabet, StringBuilder tree) throws IOException {
         Node node = new Node();
         int j = 0;
         for (int i = 0; i < tree.length(); i++){
@@ -35,7 +34,8 @@ public class Decompressor {
         return node;
     }
 
-    public static String decompression(String[] strData, StringBuilder codedBlock) throws IOException {
+    @Override
+    public String decompression(String[] strData, StringBuilder codedBlock) throws IOException {
         StringBuilder trees = new StringBuilder(Integer.toBinaryString(strData[2].charAt(0)));
 
         for (int i = 1; i < strData[2].length(); i++){
@@ -51,7 +51,7 @@ public class Decompressor {
         return decode(codedBlock, root);
     }
 
-    private static String decode(StringBuilder block, Node node) throws IOException {
+    private String decode(StringBuilder block, Node node) throws IOException {
         StringBuilder binarySequence = new StringBuilder();
         StringBuilder result = new StringBuilder();
         int sizeFirstByte = block.charAt(block.length() - 1) - '0';
@@ -92,7 +92,7 @@ public class Decompressor {
     }
 
 
-    private static class Node implements Comparable<Node> {
+    private class Node implements Comparable<Node> {
         private int frequency;
         private Character character;
         private Node leftChild;

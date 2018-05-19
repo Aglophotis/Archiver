@@ -1,12 +1,12 @@
-package ru.mirea.archiver;
+package ru.mirea.data;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-public class Cryptor {
-    protected static StringBuilder crypt(StringBuilder binarySequence, ArrayList<Integer> lengthSubblock){
+public abstract class Cryptor {
+    protected StringBuilder crypt(StringBuilder binarySequence, ArrayList<Integer> lengthSubblock){
         int i = 0;
         int k = 0;
         StringBuilder reverseSequence = new StringBuilder();
@@ -28,7 +28,7 @@ public class Cryptor {
         return reverseSequence;
     }
 
-    protected static ArrayList<Integer> createSizeBlock(String password) throws IOException {
+    protected ArrayList<Integer> createSizeBlock(String password) throws IOException {
         ArrayList<Integer> lengthSubblock = new ArrayList<>();
         int factor = (password.length() % 8) + 1;
         for (int i = 0; i < password.length(); i++){
@@ -43,7 +43,7 @@ public class Cryptor {
         return lengthSubblock;
     }
 
-    protected static StringBuilder byteToStr(int length, byte[] bytes){
+    protected StringBuilder byteToStr(int length, byte[] bytes){
         StringBuilder binarySequence = new StringBuilder();
         for (int i = 0; i < length; i++) {
             int tmpByte = (bytes[i] < 0) ? (256 + bytes[i]) : bytes[i];
@@ -57,7 +57,7 @@ public class Cryptor {
         return binarySequence;
     }
 
-    protected static class BlockProperties implements Comparable<BlockProperties>{
+    protected class BlockProperties implements Comparable<BlockProperties>{
         protected int length;
         protected byte[] bytes;
         protected int priority;
@@ -72,7 +72,7 @@ public class Cryptor {
         }
     }
 
-    protected static class Printer implements Runnable{
+    protected  class Printer implements Runnable{
         private int sleepTime;
         private boolean isThreadActive = true;
         private PriorityQueue<BlockProperties> qOut;

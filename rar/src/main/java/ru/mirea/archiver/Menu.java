@@ -1,35 +1,41 @@
 package ru.mirea.archiver;
 
-import java.io.IOException;
+import ru.mirea.data.*;
+
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Menu {
-    private static Random r = new Random();
-    private static long startTime = System.currentTimeMillis();
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws Exception {
+        long startTime = System.currentTimeMillis();
         boolean[] flags = new boolean[3];
         ArrayList<String> files = new ArrayList<>();
         StringBuilder password = new StringBuilder();
         HandlerCommandLine.checkCommandLine(args, flags, files, password);
 
+        Packer packer = new PackerImpl();
+        Unpacker unpacker = new UnpackerImpl();
+        Encryptor encryptor = new EncryptorImpl();
+        Decryptor decryptor = new DecryptorImpl();
+
+
+
         if (flags[0]) {
-            Packer.pack(files, flags[1]);
+            packer.pack(files, flags[1]);
             if (flags[2]) {
-                Encryptor.encryption(password.toString(), files.get(files.size() - 1));
+                encryptor.encryption(password.toString(), files.get(files.size() - 1));
             }
         }
         else {
             if (flags[2]){
                 for (String item: files) {
-                    Decryptor.decryption(password.toString(), item);
-                    Unpacker.unpack(item + "dec");
+                    decryptor.decryption(password.toString(), item);
+                    unpacker.unpack(item + "dec");
                 }
             }
             else {
                 for (String item: files) {
-                    Unpacker.unpack(item);
+                    unpacker.unpack(item);
                 }
             }
         }
@@ -37,13 +43,5 @@ public class Menu {
 
         long timeSpent = System.currentTimeMillis() - startTime;
         System.out.println(timeSpent);
-    }
-
-    private static String generateString(int size){
-        String res = "";
-        for (int i = 0; i < size; i++) {
-            res += (char) (r.nextInt(150) + 'a');
-        }
-        return res;
     }
 }

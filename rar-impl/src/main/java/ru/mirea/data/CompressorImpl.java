@@ -1,12 +1,11 @@
-package ru.mirea.archiver;
+package ru.mirea.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
-public class Compressor {
-
-    private static class Node implements Comparable<Node> {
+public class CompressorImpl implements Compressor {
+    private class Node implements Comparable<Node> {
         private int frequency;
         private Character character;
         private Node leftChild;
@@ -28,7 +27,7 @@ public class Compressor {
         }
     }
 
-    private static class FrequenciesTable{
+    private class FrequenciesTable{
         private int frequency;
         private Character character;
 
@@ -42,7 +41,8 @@ public class Compressor {
         }
     }
 
-    public static String compression(String block) {
+    @Override
+    public String compression(String block) {
         PriorityQueue<Node> tree = new PriorityQueue<>();
         HashMap<Character, Integer> hashMap = new HashMap<>();
         ArrayList<FrequenciesTable> frequencies = new ArrayList<>();
@@ -59,7 +59,7 @@ public class Compressor {
         }
 
         if ((length / iSymbols) < 5 || iSymbols > 150){
-           return "-1";
+            return "-1";
         }
 
         if (iSymbols == 1){
@@ -94,7 +94,7 @@ public class Compressor {
         return result.toString();
     }
 
-    private static StringBuilder changeTree(StringBuilder tree){
+    private StringBuilder changeTree(StringBuilder tree){
         StringBuilder tmp = new StringBuilder();
         boolean isZero = false;
         for (int i = 0; i < tree.length(); i++){
@@ -112,7 +112,7 @@ public class Compressor {
         return tmp;
     }
 
-    private static String createCodeSequence(String text, Node node){
+    private String createCodeSequence(String text, Node node){
         String[] codes = codeTable(node);
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {
@@ -144,7 +144,7 @@ public class Compressor {
         return charsetBytes;
     }
 
-    private static StringBuilder encode(String block, Node node) {
+    private StringBuilder encode(String block, Node node) {
         String codeSequence = createCodeSequence(block, node);
         StringBuilder charsetBytes = bitsToString(codeSequence);
         int sizeLastByte = 8 - (codeSequence.length() % 8);
@@ -155,14 +155,14 @@ public class Compressor {
     }
 
 
-    private static String[] codeTable(Node node) {
+    private String[] codeTable(Node node) {
         String[] codeTable = new String[65536];
         codeTable(node, new StringBuilder(), codeTable);
         return codeTable;
     }
 
 
-    private static void codeTable(Node node, StringBuilder code, String[] codeTable) {
+    private void codeTable(Node node, StringBuilder code, String[] codeTable) {
         if (node.character != null) {
             codeTable[node.character] = code.toString();
             return;
@@ -173,7 +173,7 @@ public class Compressor {
         code.deleteCharAt(code.length() - 1);
     }
 
-    private static void getInfo(Node current, StringBuilder code, StringBuilder alphabet, StringBuilder tree) {
+    private void getInfo(Node current, StringBuilder code, StringBuilder alphabet, StringBuilder tree) {
         if (current.character != null) {
             if (current.character > 127){
                 char tmp = current.character;

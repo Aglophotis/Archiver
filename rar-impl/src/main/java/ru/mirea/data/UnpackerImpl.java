@@ -1,46 +1,52 @@
-package ru.mirea.archiver;
+package ru.mirea.data;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-public class Unpacker {
-    private final static int BUFFER_SIZE_UNPACK = 64000;
+public class UnpackerImpl implements Unpacker {
+    private final int BUFFER_SIZE_UNPACK = 64000;
 
-    public static void unpack(String file) throws IOException {
+    @Override
+    public void unpack(String file) throws Exception {
         FileOutputStream fileOutputStream = null;
 
-            String path = new File(".").getCanonicalPath() + "\\original\\" + file;
-            if (!(new File(path).exists()))
-                throw new IllegalArgumentException("Unknown name of file");
-            final FileInputStream fileInputStream = new FileInputStream(path);
+        String path = new File(".").getCanonicalPath() + "\\" + file;
+        if (!(new File(path).exists()))
+            throw new IllegalArgumentException("Unknown name of file");
+        final FileInputStream fileInputStream = new FileInputStream(path);
 
-            char tmp = (char)fileInputStream.read();
-            while (fileInputStream.available() != 0) {
-                if (tmp == '0') {
-                    fileOutputStream = createFile(fileOutputStream, fileInputStream);
-                    unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
-                } else if (tmp == '1'){
-                    fileOutputStream = createFile(fileOutputStream, fileInputStream);
-                    unpackWithCompression(fileInputStream, fileOutputStream);
-                } else if (tmp == '2'){
-                    unpackWithCompression(fileInputStream, fileOutputStream);
-                } else if (tmp == '3'){
-                    unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
-                } else if (tmp == '4') {
-                    fileOutputStream = createFile(fileOutputStream, fileInputStream);
-                    unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
-                } else if (tmp == '5'){
-                    unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
-                } else {
-                    fileInputStream.close();
-                    throw new IOException("unpack: Archive is bit");
-                }
-                tmp = (char)fileInputStream.read();
+        char tmp = (char)fileInputStream.read();
+        while (fileInputStream.available() != 0) {
+            if (tmp == '0') {
+                fileOutputStream = createFile(fileOutputStream, fileInputStream);
+                unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+            } else if (tmp == '1'){
+                fileOutputStream = createFile(fileOutputStream, fileInputStream);
+                unpackWithCompression(fileInputStream, fileOutputStream);
+            } else if (tmp == '2'){
+                unpackWithCompression(fileInputStream, fileOutputStream);
+            } else if (tmp == '3'){
+                unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+            } else if (tmp == '4') {
+                fileOutputStream = createFile(fileOutputStream, fileInputStream);
+                unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+            } else if (tmp == '5'){
+                unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+            } else {
+                fileInputStream.close();
+                throw new IOException("unpack: Archive is bit");
             }
-            fileInputStream.close();
+            tmp = (char)fileInputStream.read();
+        }
+        if (fileOutputStream != null)
+            fileOutputStream.close();
+        fileInputStream.close();
     }
 
 
-    private static void getInfo(FileInputStream fileInputStream, String[] strData, int[] intData) throws IOException {
+    private void getInfo(FileInputStream fileInputStream, String[] strData, int[] intData) throws IOException {
         StringBuilder tmp = new StringBuilder();
 
         int b = fileInputStream.read();
@@ -78,7 +84,7 @@ public class Unpacker {
         }
     }
 
-    private static int getInfo(FileInputStream input) throws IOException {
+    private int getInfo(FileInputStream input) throws IOException {
         String tmp = "";
         int b = input.read();
         while (b != ':') {
@@ -88,7 +94,7 @@ public class Unpacker {
         return Integer.parseInt(tmp);
     }
 
-    private static FileOutputStream createFile(FileOutputStream fileOutputStream, FileInputStream fileInputStream) throws IOException {
+    private FileOutputStream createFile(FileOutputStream fileOutputStream, FileInputStream fileInputStream) throws IOException {
         String path;
         String fileName;
         if (fileOutputStream != null)
@@ -101,12 +107,13 @@ public class Unpacker {
             b = fileInputStream.read();
         }
 
-        path = new File(".").getCanonicalPath() + "\\results\\" + fileName;
+        path = new File(".").getCanonicalPath() + "\\" + fileName;
         fileOutputStream = new FileOutputStream(path);
         return fileOutputStream;
     }
 
-    private static void unpackWithCompression(FileInputStream fileInputStream, FileOutputStream fileOutputStream) throws IOException{
+    private void unpackWithCompression(FileInputStream fileInputStream, FileOutputStream fileOutputStream) throws Exception {
+        Decompressor decompressor = new DecompressorImpl();
         String[] strData = new String[4];
         int[] intData = new int[4];
         getInfo(fileInputStream, strData, intData);
@@ -120,7 +127,7 @@ public class Unpacker {
 
         String result = new String(characters);
         StringBuilder tmpStr = new StringBuilder(result);
-        result = Decompressor.decompression(strData, tmpStr);
+        result = decompressor.decompression(strData, tmpStr);
 
         char[] tmpCharacters = result.toCharArray();
         byte[] tmpBytes = new byte[tmpCharacters.length];
@@ -130,7 +137,7 @@ public class Unpacker {
         fileOutputStream.write(tmpBytes, 0, tmpBytes.length);
     }
 
-    private static void unpackWithoutCompression(FileInputStream fileInputStream, FileOutputStream fileOutputStream, int BUFFER_SIZE) throws IOException{
+    private void unpackWithoutCompression(FileInputStream fileInputStream, FileOutputStream fileOutputStream, int BUFFER_SIZE) throws IOException{
         int sizeFile = getInfo(fileInputStream);
         int quantitySymbols;
         byte[] buffer = new byte[BUFFER_SIZE];
@@ -153,7 +160,7 @@ public class Unpacker {
         }
     }
 
-    private static void unpackRepeat(FileInputStream fileInputStream, FileOutputStream fileOutputStream, int BUFFER_SIZE) throws IOException {
+    private void unpackRepeat(FileInputStream fileInputStream, FileOutputStream fileOutputStream, int BUFFER_SIZE) throws IOException {
         int sizeFile = getInfo(fileInputStream);
         byte[] buffer = new byte[BUFFER_SIZE];
         if ((fileInputStream.read(buffer, 0, 1)) == -1){
