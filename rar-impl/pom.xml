@@ -1,38 +1,29 @@
 <project>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>ru.mirea</groupId>
-	<artifactId>rar-root</artifactId>
-	<version>1.0</version>
-	<packaging>pom</packaging>
-
+	<groupId>ru.mirea.data</groupId>
+	<artifactId>rar-data-source-impl</artifactId>
+	<version>0.1</version>
+	
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
-	<modules>
-		<module>rar</module>
-		<module>rar-api</module>
-		<module>rar-impl</module>
-	</modules>
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<version>3.1.0</version>
 				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>ru.mirea.archiver.Menu</mainClass>
-						</manifest>
-					</archive>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
 				</configuration>
 				<executions>
 					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
+						<id>make-assembly</id> <!-- this is used for inheritance merges -->
+						<phase>package</phase> <!-- bind to the packaging phase -->
 						<goals>
 							<goal>single</goal>
 						</goals>
@@ -43,18 +34,6 @@
 	</build>
 
 	<dependencies>
-		<dependency>
-			<groupId>ru.mirea.archiver</groupId>
-			<artifactId>archiver</artifactId>
-			<version>0.1</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>ru.mirea.data</groupId>
-			<artifactId>rar-data-source-impl</artifactId>
-			<version>0.1</version>
-			<scope>compile</scope>
-		</dependency>
 		<dependency>
 			<groupId>ru.mirea.data</groupId>
 			<artifactId>rar-data-source</artifactId>

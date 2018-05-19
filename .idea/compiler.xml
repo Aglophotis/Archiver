@@ -6,11 +6,22 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="archiver" />
+        <module name="rar" />
+        <module name="rar-api" />
+        <module name="rar-impl" />
+        <module name="weather-data-source" />
+        <module name="weather-data-source-impl" />
+        <module name="weather-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="archiver" target="1.8" />
+      <module name="rar" target="1.8" />
+      <module name="rar-api" target="1.8" />
+      <module name="rar-impl" target="1.8" />
+      <module name="weather-data-source" target="1.8" />
+      <module name="weather-data-source-impl" target="1.8" />
+      <module name="weather-service" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

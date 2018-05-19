@@ -1,10 +1,10 @@
-package ru.mirea;
+package ru.mirea.archiver;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Main {
+public class Menu {
     private static Random r = new Random();
     private static long startTime = System.currentTimeMillis();
 

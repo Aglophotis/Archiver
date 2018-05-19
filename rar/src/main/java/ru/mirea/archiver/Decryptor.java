@@ -1,4 +1,4 @@
-package ru.mirea;
+package ru.mirea.archiver;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,11 +9,11 @@ import java.util.PriorityQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class Encryptor extends Cryptor{
+public class Decryptor extends Cryptor{
     private final static int BUFFER_SIZE = 64000;
     private static Integer globalPriority = 0;
 
-    public static void encryption(String password, String filename) throws IOException, InterruptedException {
+    public static void decryption(String password, String filename) throws IOException, InterruptedException {
         ArrayList<Integer> lengthSubblock = createSizeBlock(password);
         BlockingQueue<BlockProperties> qIn = new LinkedBlockingQueue<>();
         PriorityQueue<BlockProperties> qOut = new PriorityQueue<>();
@@ -21,20 +21,20 @@ public class Encryptor extends Cryptor{
         int quantitySymbols;
         globalPriority = 0;
 
-        String path1 = new File(".").getCanonicalPath() + "\\original\\" + filename + ".afk";
+        String path1 = new File(".").getCanonicalPath() + "\\original\\" + filename;
         if (!(new File(path1).exists()))
             throw new IllegalArgumentException("Unknown name of file");
         final FileInputStream fileInputStream = new FileInputStream(path1);
 
-        String path2 = new File(".").getCanonicalPath() + "\\original\\" + filename + "enc";
+        String path2 = new File(".").getCanonicalPath() + "\\original\\" + filename + "dec";
         final FileOutputStream fileOutputStream = new FileOutputStream(path2);
 
-        BlockEncryptor blockEncryptor = new BlockEncryptor(qIn, qOut, lengthSubblock);
+        BlockDecryptor blockDecryptor = new BlockDecryptor(qIn, qOut, lengthSubblock);
         Printer printer = new Printer(1, qOut, fileOutputStream);
-        Thread thread1 = new Thread(blockEncryptor);
-        Thread thread2 = new Thread(blockEncryptor);
-        Thread thread3 = new Thread(blockEncryptor);
-        Thread thread4 = new Thread(blockEncryptor);
+        Thread thread1 = new Thread(blockDecryptor);
+        Thread thread2 = new Thread(blockDecryptor);
+        Thread thread3 = new Thread(blockDecryptor);
+        Thread thread4 = new Thread(blockDecryptor);
         Thread threadPrinter = new Thread(printer);
 
 
@@ -44,7 +44,6 @@ public class Encryptor extends Cryptor{
         thread4.start();
         threadPrinter.start();
 
-
         while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE)) > 0){
             byte[] tmpBytes = bytes.clone();
             qIn.put(new BlockProperties(quantitySymbols, tmpBytes));
@@ -53,7 +52,7 @@ public class Encryptor extends Cryptor{
         while (!qIn.isEmpty()){
             Thread.sleep(10);
         }
-        blockEncryptor.close();
+        blockDecryptor.close();
 
         for (int j = 0; j < 10; j++){
             qIn.put(new BlockProperties(-1, bytes));
@@ -71,27 +70,21 @@ public class Encryptor extends Cryptor{
 
         threadPrinter.join();
 
-        fileInputStream.close();
         fileOutputStream.close();
+        fileInputStream.close();
 
-        File fileOriginal = new File(path1);
-        if (!fileOriginal.delete()){
-            throw new IOException("file cannot be deleted");
-        }
 
-        File fileEncryption = new File(path2);
-        if (!fileEncryption.renameTo(new File(path1))){
-            throw new IOException("file cannot be renamed");
-        }
+        File fileOriginal = new File(path2);
+        fileOriginal.deleteOnExit();
     }
 
-    private static class BlockEncryptor implements Runnable{
+    private static class BlockDecryptor implements Runnable{
         private boolean isThreadActive = true;
         BlockingQueue<BlockProperties> qIn;
         PriorityQueue<BlockProperties> qOut;
         ArrayList<Integer> lengthSubblock;
 
-        BlockEncryptor(BlockingQueue<BlockProperties> qIn, PriorityQueue<BlockProperties> qOut, ArrayList<Integer> lengthSubblock) {
+        BlockDecryptor(BlockingQueue<BlockProperties> qIn, PriorityQueue<BlockProperties> qOut, ArrayList<Integer> lengthSubblock) {
             this.qIn = qIn;
             this.qOut = qOut;
             this.lengthSubblock = lengthSubblock;
@@ -114,13 +107,16 @@ public class Encryptor extends Cryptor{
                         continue;
 
                     StringBuilder binarySequence = byteToStr(block.length, block.bytes);
-                    StringBuilder reverseSequence = crypt(binarySequence, lengthSubblock).reverse();
+                    binarySequence = binarySequence.reverse();
+
+                    StringBuilder reverseSequence = crypt(binarySequence, lengthSubblock);
                     StringBuilder result = Compressor.bitsToString(reverseSequence.toString());
                     char[] characters = result.toString().toCharArray();
                     byte[] tmpBytes = new byte[characters.length];
                     for (int j = 0; j < characters.length; j++) {
                         tmpBytes[j] = (byte) characters[j];
                     }
+
                     block.bytes = tmpBytes;
                     block.length = characters.length;
                     synchronized (qOut){

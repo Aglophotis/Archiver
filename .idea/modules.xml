@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/archiver.iml" filepath="$PROJECT_DIR$/archiver.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rar/rar.iml" filepath="$PROJECT_DIR$/rar/rar.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rar-api/rar-api.iml" filepath="$PROJECT_DIR$/rar-api/rar-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rar-impl/rar-impl.iml" filepath="$PROJECT_DIR$/rar-impl/rar-impl.iml" />
     </modules>
   </component>
 </project>
