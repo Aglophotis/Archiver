@@ -1,6 +1,7 @@
 package ru.mirea.data;
 
-public interface Decryptor {
-    void decryption(String password, String filename) throws Exception;
+import java.io.File;
 
+public interface Decryptor {
+    int decryption(String password, File inputFile) throws Exception;
 }

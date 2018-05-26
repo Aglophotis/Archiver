@@ -24,6 +24,8 @@ public abstract class Cryptor {
             }
             ++k;
             reverseSequence.append(tmpStr.reverse());
+            tmpStr.delete(0, tmpStr.length());
+            tmpStr = null;
         }
         return reverseSequence;
     }
@@ -43,6 +45,28 @@ public abstract class Cryptor {
         return lengthSubblock;
     }
 
+    protected StringBuilder bitsToString(String binaryBlock){
+        int codeSet = 8;
+        StringBuilder charsetBytes = new StringBuilder();
+        int charByte = 0;
+        int length = binaryBlock.length() - 1;
+        for (int i = length; i >= 0; i--) {
+            if ((length - i) % codeSet == codeSet-1){
+                charByte += (binaryBlock.charAt(i) - '0')*Math.pow(2, (length - i) % codeSet);
+                charsetBytes.append((char)charByte);
+                charByte = 0;
+            }
+            else{
+                charByte += (binaryBlock.charAt(i) - '0')*Math.pow(2, (length - i) % codeSet);
+            }
+        }
+
+        if ((binaryBlock.length() - 1) % codeSet != codeSet-1)
+            charsetBytes.append((char)charByte);
+        charsetBytes.reverse();
+        return charsetBytes;
+    }
+
     protected StringBuilder byteToStr(int length, byte[] bytes){
         StringBuilder binarySequence = new StringBuilder();
         for (int i = 0; i < length; i++) {
@@ -53,6 +77,7 @@ public abstract class Cryptor {
                 str2.append("0");
             }
             binarySequence.append(str2.append(str1));
+            str2.delete(0, str2.length());
         }
         return binarySequence;
     }
@@ -95,6 +120,8 @@ public abstract class Cryptor {
                                 BlockProperties block = qOut.poll();
                                 fileOutputStream.write(block.bytes, 0, block.length);
                                 ++priority;
+                                block.bytes = null;
+                                block = null;
                             }
                         }
                     }

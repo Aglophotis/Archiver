@@ -13,21 +13,20 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
     private final static int BUFFER_SIZE = 64000;
     private Integer globalPriority = 0;
 
-    public void decryption(String password, String filename) throws IOException, InterruptedException {
+    public int decryption(String password, File inputFile) throws IOException, InterruptedException {
         ArrayList<Integer> lengthSubblock = createSizeBlock(password);
         BlockingQueue<BlockProperties> qIn = new LinkedBlockingQueue<>();
         PriorityQueue<BlockProperties> qOut = new PriorityQueue<>();
         byte[] bytes = new byte[BUFFER_SIZE];
+        byte[][] groupBytes = new byte[15][BUFFER_SIZE];
         int quantitySymbols;
         globalPriority = 0;
 
-        String path1 = new File(".").getCanonicalPath() + "\\" + filename;
-        if (!(new File(path1).exists()))
-            throw new IllegalArgumentException("Unknown name of file");
-        final FileInputStream fileInputStream = new FileInputStream(path1);
+        String path1 = inputFile.getAbsolutePath();
+        FileInputStream fileInputStream = new FileInputStream(path1);
 
-        String path2 = new File(".").getCanonicalPath() + "\\" + filename + "dec";
-        final FileOutputStream fileOutputStream = new FileOutputStream(path2);
+        String path2 = inputFile.getAbsolutePath() + "dec";
+        FileOutputStream fileOutputStream = new FileOutputStream(path2);
 
         BlockDecryptor blockDecryptor = new BlockDecryptor(qIn, qOut, lengthSubblock);
         Printer printer = new Printer(1, qOut, fileOutputStream);
@@ -44,9 +43,13 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
         thread4.start();
         threadPrinter.start();
 
+        int i = 0;
         while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE)) > 0){
-            byte[] tmpBytes = bytes.clone();
-            qIn.put(new BlockProperties(quantitySymbols, tmpBytes));
+            groupBytes[i%15] = bytes.clone();
+            while (qIn.size() > 5)
+                Thread.sleep(1);
+            qIn.put(new BlockProperties(quantitySymbols, groupBytes[i%15]));
+            ++i;
         }
 
         while (!qIn.isEmpty()){
@@ -73,9 +76,14 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
         fileOutputStream.close();
         fileInputStream.close();
 
+        qIn = null;
+        qOut = null;
+        blockDecryptor = null;
+        printer = null;
+        groupBytes = null;
+        bytes = null;
 
-        File fileOriginal = new File(path2);
-        fileOriginal.deleteOnExit();
+        return 0;
     }
 
     private class BlockDecryptor implements Runnable{
@@ -100,6 +108,8 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
                             block = qIn.take();
                             block.priority = globalPriority;
                             ++globalPriority;
+                            if (globalPriority % 51 == 0)
+                                System.gc();
                         }
                     }
 
@@ -110,15 +120,23 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
                     binarySequence = binarySequence.reverse();
 
                     StringBuilder reverseSequence = crypt(binarySequence, lengthSubblock);
-                    StringBuilder result = CompressorImpl.bitsToString(reverseSequence.toString());
+                    StringBuilder result = bitsToString(reverseSequence.toString());
                     char[] characters = result.toString().toCharArray();
                     byte[] tmpBytes = new byte[characters.length];
                     for (int j = 0; j < characters.length; j++) {
                         tmpBytes[j] = (byte) characters[j];
                     }
 
+                    binarySequence.delete(0, binarySequence.length());
+                    reverseSequence.delete(0, reverseSequence.length());
+                    result.delete(0, result.length());
+                    binarySequence = null;
+                    reverseSequence = null;
+                    result = null;
+                    characters = null;
+
                     block.bytes = tmpBytes;
-                    block.length = characters.length;
+                    block.length = tmpBytes.length;
                     synchronized (qOut){
                         qOut.add(block);
                     }

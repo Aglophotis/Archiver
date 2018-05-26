@@ -39,12 +39,14 @@ public class CompressorTest {
             fileOutputStream1.close();
             fileOutputStream2.close();
 
-            ArrayList<String> files = new ArrayList<>();
-            files.add("test1");
-            files.add("test2");
-            files.add("testing");
+            File[] files = new File[2];
+            files[0] = new File(path1);
+            files[1] = new File(path2);
+            File outputFile = new File(new File(".").getCanonicalPath() + "\\" + "testing");
 
-            packer.pack(files, true);
+            for (File item : files) {
+                packer.pack(item, outputFile, true);
+            }
 
             File file1 = new File(path1);
             assertTrue(file1.renameTo(new File(path4)));
@@ -52,7 +54,7 @@ public class CompressorTest {
             File file2 = new File(path2);
             assertTrue(file2.renameTo(new File(path5)));
 
-            unpacker.unpack("testing.afk");
+            unpacker.unpack(new File(path3));
 
             FileInputStream fileInputStream1 = new FileInputStream(path1);
             FileInputStream fileInputStream2 = new FileInputStream(path2);
@@ -86,7 +88,7 @@ public class CompressorTest {
     private String generateStringLong(int size){
         StringBuilder res = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            res.append((char) (r.nextInt(255)));
+            res.append((char) (r.nextInt(1024)));
         }
         return res.toString();
     }

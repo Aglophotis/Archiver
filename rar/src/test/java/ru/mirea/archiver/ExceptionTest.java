@@ -32,12 +32,15 @@ public class ExceptionTest {
         fileOutputStream1.close();
         fileOutputStream2.close();
 
-        ArrayList<String> files = new ArrayList<>();
-        files.add("test1");
-        files.add("test2");
-        files.add("testing");
+        File[] files = new File[2];
+        files[0] = new File(path1);
+        files[1] = new File(path2);
+        File outputFile = new File(new File(".").getCanonicalPath() + "\\" + "testing");
 
-        packer.pack(files, true);
+        for (File item : files) {
+            packer.pack(item, outputFile, true);
+        }
+
 
         File file1 = new File(path1);
         assertTrue(file1.renameTo(new File(path4)));
@@ -46,10 +49,11 @@ public class ExceptionTest {
         assertTrue(file2.renameTo(new File(path5)));
 
         String password = "12345678";
-        encryptor.encryption(password, "testing");
-        decryptor.decryption(password, "testing.afk");
+        encryptor.encryption(password, new File(new File(".").getCanonicalPath() + "\\" + "testing"));
 
-        unpacker.unpack("testing.afkdec");
+        decryptor.decryption(password, new File(path3));
+
+        unpacker.unpack(new File(path6));
 
         FileInputStream fileInputStream1 = new FileInputStream(path1);
         FileInputStream fileInputStream2 = new FileInputStream(path2);
@@ -63,13 +67,11 @@ public class ExceptionTest {
         File file3 = new File(path3);
         File file4 = new File(path4);
         File file5 = new File(path5);
-        File file6 = new File(path6);
         assertTrue(file1.delete());
         assertTrue(file2.delete());
         assertTrue(file3.delete());
         assertTrue(file4.delete());
         assertTrue(file5.delete());
-        assertTrue(file6.delete());
     }
 
     @Test
@@ -86,21 +88,23 @@ public class ExceptionTest {
         FileOutputStream fileOutputStream1 = new FileOutputStream(path1);
         fileOutputStream1.close();
 
-        ArrayList<String> files = new ArrayList<>();
-        files.add("test1");
-        files.add("testing");
+        File[] files = new File[1];
+        files[0] = new File(path1);
+        File outputFile = new File(new File(".").getCanonicalPath() + "\\" + "testing");
 
-        packer.pack(files, true);
+        for (File item : files) {
+            packer.pack(item, outputFile, true);
+        }
 
         File file1 = new File(path1);
         assertTrue(file1.renameTo(new File(path4)));
 
         String password = "12345678";
-        encryptor.encryption(password, "testing");
-        decryptor.decryption(password, "testing.afk");
+        encryptor.encryption(password, new File(new File(".").getCanonicalPath() + "\\" + "testing"));
 
-        unpacker.unpack("testing.afkdec");
+        decryptor.decryption(password, new File(path3));
 
+        unpacker.unpack(new File(path6));
         FileInputStream fileInputStream1 = new FileInputStream(path1);
 
         assertEquals(fileInputStream1.available(), 0);
@@ -109,11 +113,9 @@ public class ExceptionTest {
 
         File file3 = new File(path3);
         File file4 = new File(path4);
-        File file6 = new File(path6);
         assertTrue(file1.delete());
         assertTrue(file3.delete());
         assertTrue(file4.delete());
-        assertTrue(file6.delete());
     }
 
     @Test
@@ -140,12 +142,14 @@ public class ExceptionTest {
             fileOutputStream1.close();
             fileOutputStream2.close();
 
-            ArrayList<String> files = new ArrayList<>();
-            files.add("test1");
-            files.add("test2");
-            files.add("testing");
+            File[] files = new File[2];
+            files[0] = new File(path1);
+            files[1] = new File(path2);
+            File outputFile = new File(new File(".").getCanonicalPath() + "\\" + "testing");
 
-            packer.pack(files, true);
+            for (File item : files) {
+                packer.pack(item, outputFile, true);
+            }
 
             File file1 = new File(path1);
             assertTrue(file1.renameTo(new File(path4)));
@@ -154,10 +158,11 @@ public class ExceptionTest {
             assertTrue(file2.renameTo(new File(path5)));
 
             String password = generatePassword((i % 10) + 3);
-            encryptor.encryption(password, "testing");
-            decryptor.decryption(password, "testing.afk");
+            encryptor.encryption(password, new File(new File(".").getCanonicalPath() + "\\" + "testing"));
 
-            unpacker.unpack("testing.afkdec");
+            decryptor.decryption(password, new File(path3));
+
+            unpacker.unpack(new File(path6));
 
             FileInputStream fileInputStream1 = new FileInputStream(path1);
             FileInputStream fileInputStream2 = new FileInputStream(path2);
@@ -180,13 +185,11 @@ public class ExceptionTest {
             File file3 = new File(path3);
             File file4 = new File(path4);
             File file5 = new File(path5);
-            File file6 = new File(path6);
             assertTrue(file1.delete());
             assertTrue(file2.delete());
             assertTrue(file3.delete());
             assertTrue(file4.delete());
             assertTrue(file5.delete());
-            assertTrue(file6.delete());
         }
     }
 

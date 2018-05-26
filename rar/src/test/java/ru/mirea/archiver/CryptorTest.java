@@ -37,12 +37,15 @@ public class CryptorTest {
             fileOutputStream1.close();
             fileOutputStream2.close();
 
-            ArrayList<String> files = new ArrayList<>();
-            files.add("test1");
-            files.add("test2");
-            files.add("testing1");
+            File[] files = new File[2];
+            files[0] = new File(path1);
+            files[1] = new File(path2);
+            File outputFile = new File(new File(".").getCanonicalPath() + "\\" + "testing1");
 
-            packer.pack(files, false);
+            for (File item : files) {
+                packer.pack(item, outputFile, false);
+            }
+
 
             FileOutputStream fileOutputStream3 = new FileOutputStream(path4);
             FileInputStream fileInputStream1 = new FileInputStream(path3);
@@ -58,9 +61,10 @@ public class CryptorTest {
 
             String password = generatePassword((i % 12) + 3);
 
-            encryptor.encryption(password, "testing1");
 
-            decryptor.decryption(password, "testing1.afk");
+            encryptor.encryption(password, new File(new File(".").getCanonicalPath() + "\\" + "testing1"));
+
+            decryptor.decryption(password, new File(path3));
 
             fileInputStream1 = new FileInputStream(path5);
             FileInputStream fileInputStream2 = new FileInputStream(path4);
@@ -71,7 +75,7 @@ public class CryptorTest {
             fileInputStream1.close();
             fileInputStream2.close();
 
-            decryptor.decryption(password + "1", "testing1.afk");
+            decryptor.decryption(password + "1", new File(path3));
 
             fileInputStream1 = new FileInputStream(path5);
             fileInputStream2 = new FileInputStream(path4);
@@ -103,7 +107,7 @@ public class CryptorTest {
     private String generateString(int size){
         StringBuilder res = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            res.append((char) (r.nextInt(255)));
+            res.append((char) (r.nextInt(1024)));
         }
         return res.toString();
     }

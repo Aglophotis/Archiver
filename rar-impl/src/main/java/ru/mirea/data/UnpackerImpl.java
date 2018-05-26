@@ -6,120 +6,132 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class UnpackerImpl implements Unpacker {
-    private final int BUFFER_SIZE_UNPACK = 64000;
 
     @Override
-    public void unpack(String file) throws Exception {
+    public int unpack(File inputFile) throws Exception {
         FileOutputStream fileOutputStream = null;
+        int BUFFER_SIZE_UNPACK = 64000;
 
-        String path = new File(".").getCanonicalPath() + "\\" + file;
-        if (!(new File(path).exists()))
-            throw new IllegalArgumentException("Unknown name of file");
+        String path = inputFile.getAbsolutePath();
         final FileInputStream fileInputStream = new FileInputStream(path);
 
         char tmp = (char)fileInputStream.read();
         while (fileInputStream.available() != 0) {
             if (tmp == '0') {
-                fileOutputStream = createFile(fileOutputStream, fileInputStream);
-                unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+                fileOutputStream = createFile(fileOutputStream, fileInputStream, inputFile);
+                int error = unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+                if (error != 0)
+                    return error;
             } else if (tmp == '1'){
-                fileOutputStream = createFile(fileOutputStream, fileInputStream);
-                unpackWithCompression(fileInputStream, fileOutputStream);
+                fileOutputStream = createFile(fileOutputStream, fileInputStream, inputFile);
+                int error = unpackWithCompression(fileInputStream, fileOutputStream);
+                if (error != 0)
+                    return error;
             } else if (tmp == '2'){
-                unpackWithCompression(fileInputStream, fileOutputStream);
+                int error = unpackWithCompression(fileInputStream, fileOutputStream);
+                if (error != 0)
+                    return error;
             } else if (tmp == '3'){
-                unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+                int error = unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+                if (error != 0)
+                    return error;
             } else if (tmp == '4') {
-                fileOutputStream = createFile(fileOutputStream, fileInputStream);
-                unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+                fileOutputStream = createFile(fileOutputStream, fileInputStream, inputFile);
+                int error = unpackRepeat(fileInputStream, fileOutputStream);
+                if (error != 0)
+                    return error;
             } else if (tmp == '5'){
-                unpackRepeat(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+                int error = unpackRepeat(fileInputStream, fileOutputStream);
+                if (error != 0)
+                    return error;
             } else {
                 fileInputStream.close();
-                throw new IOException("unpack: Archive is bit");
+                if (fileOutputStream != null) {
+                    fileOutputStream.close();
+                }
+                return -3;
             }
             tmp = (char)fileInputStream.read();
         }
         if (fileOutputStream != null)
             fileOutputStream.close();
         fileInputStream.close();
+        if (inputFile.getName().endsWith(".afkdec"))
+            if (!inputFile.delete())
+                return -8;
+        return 0;
     }
 
 
-    private void getInfo(FileInputStream fileInputStream, String[] strData, int[] intData) throws IOException {
-        StringBuilder tmp = new StringBuilder();
+    private int getInfo(FileInputStream fileInputStream, String[] strData, int[] intData) throws IOException {
+        intData[0] = getMetaInt(fileInputStream);
+        if (intData[0] == -1)
+            return -1;
+        strData[1] = getMetaString(fileInputStream, intData[0]);
+        intData[1] = getMetaInt(fileInputStream);
+        if (intData[1] == -1)
+            return -1;
+        strData[2] = getMetaString(fileInputStream, intData[1]);
+        intData[2] = getMetaInt(fileInputStream);
+        if (intData[2] == -1)
+            return -1;
+        return 0;
+    }
 
+    private int getMetaInt(FileInputStream fileInputStream) throws IOException {
+        StringBuilder tmp = new StringBuilder();
         int b = fileInputStream.read();
         while (b != ':') {
             if (!Character.isDigit((char)b)) {
                 fileInputStream.close();
-                throw new IOException("meta: Archive is bit");
+                return -1;
             }
             tmp.append((char)b);
             b = fileInputStream.read();
         }
-        intData[0] = Integer.parseInt(tmp.toString());
-        tmp.delete(0, tmp.length());
-
-        for (int j = 1; j < 3; j++) {
-            b = fileInputStream.read();
-            for (int i = 0; i < intData[j-1]; i++) {
-                tmp.append((char) b);
-                b = fileInputStream.read();
-            }
-            strData[j] = tmp.toString();
-            tmp.delete(0, tmp.length());
-            b = fileInputStream.read();
-
-            while (b != ':') {
-                if (!Character.isDigit((char)b)) {
-                    fileInputStream.close();
-                    throw new IOException("meta: Archive is bit");
-                }
-                tmp.append((char)b);
-                b = fileInputStream.read();
-            }
-            intData[j] = Integer.parseInt(tmp.toString());
-            tmp.delete(0, tmp.length());
-        }
+        return Integer.parseInt(tmp.toString());
     }
 
-    private int getInfo(FileInputStream input) throws IOException {
-        String tmp = "";
-        int b = input.read();
-        while (b != ':') {
-            tmp += (char)b;
-            b = input.read();
+    private String getMetaString(FileInputStream fileInputStream, int length) throws IOException {
+        StringBuilder tmp = new StringBuilder();
+        int b = fileInputStream.read();
+        for (int i = 0; i < length; i++) {
+            tmp.append((char) b);
+            b = fileInputStream.read();
         }
-        return Integer.parseInt(tmp);
+        return tmp.toString();
     }
 
-    private FileOutputStream createFile(FileOutputStream fileOutputStream, FileInputStream fileInputStream) throws IOException {
+    private FileOutputStream createFile(FileOutputStream fileOutputStream,final FileInputStream fileInputStream, File inputFile) throws IOException {
         String path;
-        String fileName;
+        StringBuilder fileName = new StringBuilder();
         if (fileOutputStream != null)
             fileOutputStream.close();
 
-        fileName = "";
         int b = fileInputStream.read();
         while (b != ':') {
-            fileName += (char)b;
+            fileName.append((char)b);
             b = fileInputStream.read();
         }
 
-        path = new File(".").getCanonicalPath() + "\\" + fileName;
+        path = inputFile.getCanonicalPath();
+        path = path.substring(0, path.length() - inputFile.getName().length());
+        path += fileName.toString();
         fileOutputStream = new FileOutputStream(path);
         return fileOutputStream;
     }
 
-    private void unpackWithCompression(FileInputStream fileInputStream, FileOutputStream fileOutputStream) throws Exception {
+    private int unpackWithCompression(FileInputStream fileInputStream, FileOutputStream fileOutputStream) throws Exception {
         Decompressor decompressor = new DecompressorImpl();
         String[] strData = new String[4];
         int[] intData = new int[4];
-        getInfo(fileInputStream, strData, intData);
-
+        int error = getInfo(fileInputStream, strData, intData);
+        if (error == -1)
+            return -6;
         byte[] bytes = new byte[intData[2]];
-        fileInputStream.read(bytes, 0, intData[2]);
+        int quantitySymbols = fileInputStream.read(bytes, 0, intData[2]);
+        if (quantitySymbols != intData[2])
+            return -7;
         char[] characters = new char[bytes.length];
         for (int j = 0; j < characters.length; j++) {
             characters[j] = (char) bytes[j];
@@ -129,46 +141,81 @@ public class UnpackerImpl implements Unpacker {
         StringBuilder tmpStr = new StringBuilder(result);
         result = decompressor.decompression(strData, tmpStr);
 
+        if (result.equals("-1")){
+            fileInputStream.close();
+            fileOutputStream.close();
+            return -1;
+        }
+        if (result.equals("-2")){
+            fileInputStream.close();
+            fileOutputStream.close();
+            return -2;
+        }
+
         char[] tmpCharacters = result.toCharArray();
         byte[] tmpBytes = new byte[tmpCharacters.length];
         for (int j = 0; j < tmpCharacters.length; j++) {
             tmpBytes[j] = (byte) tmpCharacters[j];
         }
         fileOutputStream.write(tmpBytes, 0, tmpBytes.length);
+        return 0;
     }
 
-    private void unpackWithoutCompression(FileInputStream fileInputStream, FileOutputStream fileOutputStream, int BUFFER_SIZE) throws IOException{
-        int sizeFile = getInfo(fileInputStream);
+    private int unpackWithoutCompression(FileInputStream fileInputStream, FileOutputStream fileOutputStream, int BUFFER_SIZE) throws IOException{
+        int sizeFile = getMetaInt(fileInputStream);
+        if (sizeFile == -1){
+            return -6;
+        }
+        int controlSum = 0;
         int quantitySymbols;
         byte[] buffer = new byte[BUFFER_SIZE];
 
         if (BUFFER_SIZE > sizeFile){
             quantitySymbols = fileInputStream.read(buffer, 0, sizeFile);
+            controlSum += quantitySymbols;
             fileOutputStream.write(buffer, 0, quantitySymbols);
+            if (controlSum != sizeFile){
+                fileInputStream.close();
+                fileOutputStream.close();
+                return -4;
+            }
         }
         else {
             int counter = 0;
             while ((quantitySymbols = fileInputStream.read(buffer, 0, BUFFER_SIZE)) > 0) {
                 fileOutputStream.write(buffer, 0, quantitySymbols);
                 counter += quantitySymbols;
+                controlSum += quantitySymbols;
                 if (counter + BUFFER_SIZE > sizeFile){
                     quantitySymbols = fileInputStream.read(buffer, 0, sizeFile - counter);
                     fileOutputStream.write(buffer, 0, quantitySymbols);
+                    controlSum += quantitySymbols;
+                    if (controlSum != sizeFile){
+                        fileInputStream.close();
+                        fileOutputStream.close();
+                        return -4;
+                    }
                     break;
                 }
             }
         }
+        return 0;
     }
 
-    private void unpackRepeat(FileInputStream fileInputStream, FileOutputStream fileOutputStream, int BUFFER_SIZE) throws IOException {
-        int sizeFile = getInfo(fileInputStream);
-        byte[] buffer = new byte[BUFFER_SIZE];
+    private int unpackRepeat(FileInputStream fileInputStream, FileOutputStream fileOutputStream) throws IOException {
+        int sizeFile = getMetaInt(fileInputStream);
+        if (sizeFile == -1){
+            return -6;
+        }
+        byte[] buffer = new byte[sizeFile];
         if ((fileInputStream.read(buffer, 0, 1)) == -1){
             fileInputStream.close();
-            throw new IOException("unpackRepeat: Archive is bit");
+            fileOutputStream.close();
+            return -5;
         }
         for (int i = 0; i < sizeFile; i++)
             buffer[i] = buffer[0];
         fileOutputStream.write(buffer, 0, sizeFile);
+        return 0;
     }
 }

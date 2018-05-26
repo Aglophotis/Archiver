@@ -28,11 +28,13 @@ public class PackTest {
             fileOutputStream1.write(tmp1.getBytes(), 0, tmp1.getBytes().length);
             fileOutputStream1.close();
 
-            ArrayList<String> files = new ArrayList<>();
-            files.add("test1");
-            files.add("testing");
+            File[] files = new File[1];
+            files[0] = new File(path1);
+            File outputFile = new File(new File(".").getCanonicalPath() + "\\" + "testing");
 
-            packer.pack(files, false);
+            for (File item : files) {
+                packer.pack(item, outputFile, false);
+            }
 
 
             FileInputStream fileInputStream1 = new FileInputStream(path3);
@@ -85,12 +87,14 @@ public class PackTest {
             fileOutputStream2.write(tmp2.getBytes(), 0, tmp2.getBytes().length);
             fileOutputStream2.close();
 
-            ArrayList<String> files = new ArrayList<>();
-            files.add("test1");
-            files.add("test2");
-            files.add("testing");
+            File[] files = new File[2];
+            files[0] = new File(path1);
+            files[1] = new File(path2);
+            File outputFile = new File(new File(".").getCanonicalPath() + "\\" + "testing");
 
-            packer.pack(files, false);
+            for (File item : files) {
+                packer.pack(item, outputFile, false);
+            }
 
 
             FileInputStream fileInputStream1 = new FileInputStream(path3);
@@ -149,7 +153,7 @@ public class PackTest {
     private String generateString(int size){
         StringBuilder res = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            res.append((char) (r.nextInt(255)));
+            res.append((char) (r.nextInt(1024)));
         }
         return res.toString();
     }

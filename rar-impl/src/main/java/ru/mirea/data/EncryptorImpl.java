@@ -10,25 +10,24 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class EncryptorImpl extends Cryptor implements Encryptor {
-    private final static int BUFFER_SIZE = 64000;
+    private final int BUFFER_SIZE = 64000;
     private Integer globalPriority = 0;
 
     @Override
-    public void encryption(String password, String filename) throws IOException, InterruptedException {
+    public int encryption(String password, File outputFile) throws IOException, InterruptedException {
         ArrayList<Integer> lengthSubblock = createSizeBlock(password);
         BlockingQueue<Cryptor.BlockProperties> qIn = new LinkedBlockingQueue<>();
         PriorityQueue<Cryptor.BlockProperties> qOut = new PriorityQueue<>();
         byte[] bytes = new byte[BUFFER_SIZE];
+        byte[][] groupBytes = new byte[15][BUFFER_SIZE];
         int quantitySymbols;
         globalPriority = 0;
 
-        String path1 = new File(".").getCanonicalPath() + "\\" + filename + ".afk";
-        if (!(new File(path1).exists()))
-            throw new IllegalArgumentException("Unknown name of file");
-        final FileInputStream fileInputStream = new FileInputStream(path1);
+        String path1 = outputFile.getAbsolutePath() + ".afk";
+        FileInputStream fileInputStream = new FileInputStream(path1);
 
-        String path2 = new File(".").getCanonicalPath() + "\\" + filename + "enc";
-        final FileOutputStream fileOutputStream = new FileOutputStream(path2);
+        String path2 = outputFile.getAbsolutePath() + ".afkenc";
+        FileOutputStream fileOutputStream = new FileOutputStream(path2);
 
         BlockEncryptor blockEncryptor = new BlockEncryptor(qIn, qOut, lengthSubblock);
         Cryptor.Printer printer = new Cryptor.Printer(1, qOut, fileOutputStream);
@@ -45,10 +44,13 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
         thread4.start();
         threadPrinter.start();
 
-
+        int i = 0;
         while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE)) > 0){
-            byte[] tmpBytes = bytes.clone();
-            qIn.put(new Cryptor.BlockProperties(quantitySymbols, tmpBytes));
+            groupBytes[i%15] = bytes.clone();
+            while (qIn.size() > 5)
+                Thread.sleep(1);
+            qIn.put(new Cryptor.BlockProperties(quantitySymbols, groupBytes[i%15]));
+            ++i;
         }
 
         while (!qIn.isEmpty()){
@@ -66,7 +68,7 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
         thread4.join();
 
         while (!qOut.isEmpty()){
-            Thread.sleep(1);
+            Thread.sleep(10);
         }
         printer.close();
 
@@ -75,15 +77,23 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
         fileInputStream.close();
         fileOutputStream.close();
 
+        qIn = null;
+        qOut = null;
+        blockEncryptor = null;
+        printer = null;
+        groupBytes = null;
+        bytes = null;
+
         File fileOriginal = new File(path1);
         if (!fileOriginal.delete()){
-            throw new IOException("file cannot be deleted");
+            return -9;
         }
 
         File fileEncryption = new File(path2);
         if (!fileEncryption.renameTo(new File(path1))){
-            throw new IOException("file cannot be renamed");
+            return -10;
         }
+        return 0;
     }
 
     private class BlockEncryptor implements Runnable{
@@ -108,6 +118,8 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
                             block = qIn.take();
                             block.priority = globalPriority;
                             ++globalPriority;
+                            if (globalPriority % 50 == 0)
+                                System.gc();
                         }
                     }
 
@@ -116,14 +128,25 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
 
                     StringBuilder binarySequence = byteToStr(block.length, block.bytes);
                     StringBuilder reverseSequence = crypt(binarySequence, lengthSubblock).reverse();
-                    StringBuilder result = CompressorImpl.bitsToString(reverseSequence.toString());
+                    StringBuilder result = bitsToString(reverseSequence.toString());
                     char[] characters = result.toString().toCharArray();
+
+                    binarySequence.delete(0, binarySequence.length());
+                    reverseSequence.delete(0, reverseSequence.length());
+                    result.delete(0, result.length());
+                    binarySequence = null;
+                    reverseSequence = null;
+                    result = null;
+
                     byte[] tmpBytes = new byte[characters.length];
                     for (int j = 0; j < characters.length; j++) {
                         tmpBytes[j] = (byte) characters[j];
                     }
+
+                    characters = null;
+
                     block.bytes = tmpBytes;
-                    block.length = characters.length;
+                    block.length = tmpBytes.length;
                     synchronized (qOut){
                         qOut.add(block);
                     }

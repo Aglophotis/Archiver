@@ -1,5 +1,7 @@
 package ru.mirea.data;
 
+import java.io.File;
+
 public interface Encryptor {
-    void encryption(String password, String filename) throws Exception;
+    int encryption(String password, File outputFile) throws Exception;
 }

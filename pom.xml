@@ -22,7 +22,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>ru.mirea.archiver.Menu</mainClass>
+							<mainClass>ru.mirea.archiver.FrameMenu</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

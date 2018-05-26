@@ -1,6 +1,8 @@
 package ru.mirea.data;
 
 
+import java.io.File;
+
 public interface Unpacker {
-    void unpack(String file) throws Exception;
+    int unpack(File inputFile) throws Exception;
 }

@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -16,100 +13,97 @@ public class PackerImpl implements Packer{
     private Integer globalPriority = 0;
 
     @Override
-    public void pack(ArrayList<String> files, boolean isCompression) throws IOException, InterruptedException {
-        final byte[] bytes = new byte[BUFFER_SIZE_PACK];
+    public int pack(File inputFiles, File outputFile, boolean isCompression) throws IOException, InterruptedException {
+        byte[] bytes = new byte[BUFFER_SIZE_PACK];
         int quantitySymbols;
-        String path = new File(".").getCanonicalPath() + "\\" + files.get(files.size() - 1) + ".afk";
-        FileOutputStream fileOutputStream = new FileOutputStream(path);
+        String path = outputFile.getAbsolutePath() + ".afk";
+        FileOutputStream fileOutputStream = new FileOutputStream(path, true);
 
         if (!isCompression) {
-            for (int i = 0; i < files.size() - 1; i++) {
-                byte[] meta = getInfo(files.get(i)).getBytes();
-                fileOutputStream.write(meta, 0, meta.length);
+            byte[] meta = getInfo(inputFiles).getBytes();
+            fileOutputStream.write(meta, 0, meta.length);
 
-                path = new File(".").getCanonicalPath() + "\\" + files.get(i);
-                FileInputStream fileInputStream = new FileInputStream(path);
+            path = inputFiles.getAbsolutePath();
+            FileInputStream fileInputStream = new FileInputStream(path);
 
-                while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE_PACK)) > 0) {
-                    fileOutputStream.write(bytes, 0, quantitySymbols);
-                }
-
-                fileInputStream.close();
+            while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE_PACK)) > 0) {
+                fileOutputStream.write(bytes, 0, quantitySymbols);
             }
+
+            fileInputStream.close();
             fileOutputStream.close();
         } else {
-            for (int i = 0; i < files.size() - 1; i++) {
-                path = new File(".").getCanonicalPath() + "\\" + files.get(i);
-                if (new File(path).length() == 0){
-                    byte[] meta = getInfo(files.get(i)).getBytes();
-                    fileOutputStream.write(meta, 0, meta.length);
-                    continue;
-                }
-
-                FileInputStream fileInputStream = new FileInputStream(path);
-                BlockingQueue<BlockProperties> qIn = new LinkedBlockingQueue<>();
-                PriorityQueue<BlockProperties> qOut = new PriorityQueue<>();
-                globalPriority = 0;
-
-                String fileName = files.get(i) + ":";
-
-                BlockPacker packer = new BlockPacker(qIn, qOut);
-                Printer printer = new Printer(1, qOut, fileOutputStream);
-
-                Thread thread1 = new Thread(packer);
-                Thread thread2 = new Thread(packer);
-                Thread thread3 = new Thread(packer);
-                Thread thread4 = new Thread(packer);
-                Thread thread5 = new Thread(packer);
-                Thread thread6 = new Thread(packer);
-                Thread threadPrinter = new Thread(printer);
-
-
-                thread1.start();
-                thread2.start();
-                thread3.start();
-                thread4.start();
-                thread5.start();
-                thread6.start();
-                threadPrinter.start();
-
-                while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE_PACK)) > 0) {
-                    byte[] byteBlock = bytes.clone();
-
-                    qIn.put(new BlockProperties(fileName, quantitySymbols, byteBlock));
-                    fileName = "";
-                }
-
-
-                while (!qIn.isEmpty()){
-                    Thread.sleep(5);
-                }
-                packer.close();
-
-
-                for (int j = 0; j < 6; j++){
-                    qIn.put(new BlockProperties("-1", -1, bytes));
-                }
-
-
-                thread1.join();
-                thread2.join();
-                thread3.join();
-                thread4.join();
-                thread5.join();
-                thread6.join();
-
-                while (!qOut.isEmpty()){
-                    Thread.sleep(5);
-                }
-                printer.close();
-
-                threadPrinter.join();
-
-                fileInputStream.close();
+            path = inputFiles.getAbsolutePath();
+            if (new File(path).length() == 0){
+                byte[] meta = getInfo(inputFiles).getBytes();
+                fileOutputStream.write(meta, 0, meta.length);
+                fileOutputStream.close();
+                return 0;
             }
+
+            FileInputStream fileInputStream = new FileInputStream(path);
+            BlockingQueue<BlockProperties> qIn = new LinkedBlockingQueue<>();
+            PriorityQueue<BlockProperties> qOut = new PriorityQueue<>();
+            globalPriority = 0;
+
+            String fileName = inputFiles.getName() + ":";
+
+            BlockPacker packer = new BlockPacker(qIn, qOut);
+            Printer printer = new Printer(1, qOut, fileOutputStream);
+
+            Thread thread1 = new Thread(packer);
+            Thread thread2 = new Thread(packer);
+            Thread thread3 = new Thread(packer);
+            Thread thread4 = new Thread(packer);
+            Thread threadPrinter = new Thread(printer);
+
+
+            thread1.start();
+            thread2.start();
+            thread3.start();
+            thread4.start();
+            threadPrinter.start();
+
+            while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE_PACK)) > 0) {
+                byte[] byteBlock = bytes.clone();
+                while (qIn.size() > 10)
+                    Thread.sleep(1);
+                qIn.put(new BlockProperties(fileName, quantitySymbols, byteBlock));
+                fileName = "";
+            }
+
+            while (!qIn.isEmpty()){
+                Thread.sleep(5);
+            }
+            packer.close();
+
+
+            for (int j = 0; j < 4; j++){
+                qIn.put(new BlockProperties("-1", -1, bytes));
+            }
+
+
+            thread1.join();
+            thread2.join();
+            thread3.join();
+            thread4.join();
+
+            while (!qOut.isEmpty()){
+                Thread.sleep(1);
+            }
+            printer.close();
+
+            threadPrinter.join();
+
+            qIn.clear();
+            qOut.clear();
+            qIn = null;
+            qOut = null;
+
+            fileInputStream.close();
             fileOutputStream.close();
         }
+        return 0;
     }
 
     private class BlockProperties implements Comparable<BlockProperties>{
@@ -152,6 +146,8 @@ public class PackerImpl implements Packer{
                             block = qIn.take();
                             block.priority = globalPriority;
                             ++globalPriority;
+                            if (globalPriority % 100 == 0)
+                                System.gc();
                         }
                     }
 
@@ -165,6 +161,8 @@ public class PackerImpl implements Packer{
                     String strBlock = new String(tmpChar);
 
                     String s2 = compressor.compression(strBlock);
+                    tmpChar = null;
+                    strBlock = null;
                     String meta;
 
                     if (s2.equals("-1")) {
@@ -179,8 +177,6 @@ public class PackerImpl implements Packer{
                     if (s2.equals("-2")) {
                         meta = (block.fileName.length() != 0) ? ("4" + block.fileName + block.length  + ":") : ("5" + block.length + ":");
                         block.meta = meta;
-                        byte[] tmpByte = new byte[1];
-                        tmpByte[0] = block.byteBlock[0];
                         block.length = 1;
                         synchronized (qOut) {
                             qOut.add(block);
@@ -194,11 +190,12 @@ public class PackerImpl implements Packer{
                     for (int j = 0; j < characters.length; j++) {
                         tmpBytes[j] = (byte) characters[j];
                     }
+                    characters = null;
 
                     meta = (block.fileName.length() != 0) ? ("1" + block.fileName) : "2";
                     block.meta = meta;
                     block.byteBlock = tmpBytes;
-                    block.length = characters.length;
+                    block.length = tmpBytes.length;
                     synchronized (qOut) {
                         qOut.add(block);
                     }
@@ -239,6 +236,9 @@ public class PackerImpl implements Packer{
                                 fileOutputStream.write(block.meta.getBytes(), 0, block.meta.length());
                                 fileOutputStream.write(block.byteBlock, 0, block.length);
                                 ++priority;
+                                block.byteBlock = null;
+                                block.meta = null;
+                                block = null;
                             }
                         }
                     }
@@ -257,13 +257,10 @@ public class PackerImpl implements Packer{
         }
     }
 
-    private String getInfo(String fileName) throws IOException {
+    private String getInfo(File file){
         String metaInfo = "0";
-        String path = new File(".").getCanonicalPath() + "\\" + fileName;
-        if (!(new File(path).exists()))
-            throw new IllegalArgumentException("Unknown name of file: " + fileName);
-        long bytes = Files.size(Paths.get(path));
-        metaInfo +=  fileName + ":" + bytes + ":";
+        long bytes = file.length();
+        metaInfo +=  file.getName() + ":" + bytes + ":";
         return metaInfo;
     }
 

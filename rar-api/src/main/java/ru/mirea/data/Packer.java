@@ -1,8 +1,7 @@
 package ru.mirea.data;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.File;
 
 public interface Packer {
-    void pack(ArrayList<String> files, boolean isCompression) throws Exception;
+    int pack(File inputFiles, File outputFile, boolean isCompression) throws Exception;
 }

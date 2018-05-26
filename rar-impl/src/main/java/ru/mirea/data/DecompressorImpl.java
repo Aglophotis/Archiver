@@ -3,7 +3,7 @@ package ru.mirea.data;
 import java.io.IOException;
 
 public class DecompressorImpl implements Decompressor {
-    private Node createTree(String alphabet, StringBuilder tree) throws IOException {
+    private Node createTree(String alphabet, StringBuilder tree){
         Node node = new Node();
         int j = 0;
         for (int i = 0; i < tree.length(); i++){
@@ -20,8 +20,9 @@ public class DecompressorImpl implements Decompressor {
                     node = node.rightChild;
                 }
             } else {
-                if (node.parent == null)
-                    throw new IOException("Archive is bit");
+                if (node.parent == null) {
+                    return null;
+                }
                 node.character = alphabet.charAt(j);
                 ++j;
                 while (node.parent != null){
@@ -48,6 +49,9 @@ public class DecompressorImpl implements Decompressor {
         }
 
         Node root = createTree(strData[1], trees);
+        if (root == null){
+            return "-1";
+        }
         return decode(codedBlock, root);
     }
 
@@ -75,12 +79,12 @@ public class DecompressorImpl implements Decompressor {
         for (int i = 0; i < binarySequence.length(); i++){
             if (binarySequence.charAt(i) == '0') {
                 if (tmpNode.leftChild == null)
-                    throw new IOException("Archive is bit");
+                    return "-2";
                 tmpNode = tmpNode.leftChild;
             }
             else {
                 if (tmpNode.rightChild == null)
-                    throw new IOException("Archive is bit");
+                    return "-2";
                 tmpNode = tmpNode.rightChild;
             }
             if (tmpNode.character != null) {
