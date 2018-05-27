@@ -51,7 +51,7 @@ public class UnpackTest {
             assertTrue(file1.renameTo(new File(path4)));
             assertTrue(file2.renameTo(new File(path5)));
 
-            unpacker.unpack(new File(path3));
+            unpacker.unpack(new File(path3), new File(".").getCanonicalFile());
 
             FileInputStream fileInputStream1 = new FileInputStream(path1);
             FileInputStream fileInputStream2 = new FileInputStream(path2);

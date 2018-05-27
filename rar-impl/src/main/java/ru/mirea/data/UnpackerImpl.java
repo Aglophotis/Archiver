@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class UnpackerImpl implements Unpacker {
 
     @Override
-    public int unpack(File inputFile) throws Exception {
+    public int unpack(File inputFile, File outputDirectory) throws Exception {
         FileOutputStream fileOutputStream = null;
         int BUFFER_SIZE_UNPACK = 64000;
 
@@ -18,32 +21,56 @@ public class UnpackerImpl implements Unpacker {
         char tmp = (char)fileInputStream.read();
         while (fileInputStream.available() != 0) {
             if (tmp == '0') {
-                fileOutputStream = createFile(fileOutputStream, fileInputStream, inputFile);
+                fileOutputStream = createFile(fileOutputStream, fileInputStream, outputDirectory);
+                if (fileOutputStream == null) {
+                    fileInputStream.close();
+                    return -13;
+                }
                 int error = unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
-                if (error != 0)
+                if (error != 0) {
+                    closeFiles(fileInputStream, fileOutputStream);
                     return error;
+                }
             } else if (tmp == '1'){
-                fileOutputStream = createFile(fileOutputStream, fileInputStream, inputFile);
+                fileOutputStream = createFile(fileOutputStream, fileInputStream, outputDirectory);
+                if (fileOutputStream == null) {
+                    fileInputStream.close();
+                    return -13;
+                }
                 int error = unpackWithCompression(fileInputStream, fileOutputStream);
-                if (error != 0)
+                if (error != 0) {
+                    closeFiles(fileInputStream, fileOutputStream);
                     return error;
+                }
             } else if (tmp == '2'){
                 int error = unpackWithCompression(fileInputStream, fileOutputStream);
-                if (error != 0)
+                if (error != 0) {
+                    closeFiles(fileInputStream, fileOutputStream);
                     return error;
+                }
             } else if (tmp == '3'){
                 int error = unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
-                if (error != 0)
+                if (error != 0) {
+                    closeFiles(fileInputStream, fileOutputStream);
                     return error;
+                }
             } else if (tmp == '4') {
-                fileOutputStream = createFile(fileOutputStream, fileInputStream, inputFile);
+                fileOutputStream = createFile(fileOutputStream, fileInputStream, outputDirectory);
+                if (fileOutputStream == null) {
+                    fileInputStream.close();
+                    return -13;
+                }
                 int error = unpackRepeat(fileInputStream, fileOutputStream);
-                if (error != 0)
+                if (error != 0) {
+                    closeFiles(fileInputStream, fileOutputStream);
                     return error;
+                }
             } else if (tmp == '5'){
                 int error = unpackRepeat(fileInputStream, fileOutputStream);
-                if (error != 0)
+                if (error != 0) {
+                    closeFiles(fileInputStream, fileOutputStream);
                     return error;
+                }
             } else {
                 fileInputStream.close();
                 if (fileOutputStream != null) {
@@ -53,15 +80,18 @@ public class UnpackerImpl implements Unpacker {
             }
             tmp = (char)fileInputStream.read();
         }
-        if (fileOutputStream != null)
-            fileOutputStream.close();
-        fileInputStream.close();
+        closeFiles(fileInputStream, fileOutputStream);
         if (inputFile.getName().endsWith(".afkdec"))
             if (!inputFile.delete())
                 return -8;
         return 0;
     }
 
+    private void closeFiles(FileInputStream fileInputStream, FileOutputStream fileOutputStream) throws IOException {
+        if (fileOutputStream != null)
+            fileOutputStream.close();
+        fileInputStream.close();
+    }
 
     private int getInfo(FileInputStream fileInputStream, String[] strData, int[] intData) throws IOException {
         intData[0] = getMetaInt(fileInputStream);
@@ -102,7 +132,7 @@ public class UnpackerImpl implements Unpacker {
         return tmp.toString();
     }
 
-    private FileOutputStream createFile(FileOutputStream fileOutputStream,final FileInputStream fileInputStream, File inputFile) throws IOException {
+    private FileOutputStream createFile(FileOutputStream fileOutputStream,final FileInputStream fileInputStream, File outputDirectory) throws IOException {
         String path;
         StringBuilder fileName = new StringBuilder();
         if (fileOutputStream != null)
@@ -114,9 +144,11 @@ public class UnpackerImpl implements Unpacker {
             b = fileInputStream.read();
         }
 
-        path = inputFile.getCanonicalPath();
-        path = path.substring(0, path.length() - inputFile.getName().length());
-        path += fileName.toString();
+        path = outputDirectory.getAbsolutePath();
+        if (!Files.exists(Paths.get(path))) {
+            return null;
+        }
+        path += "\\" + fileName.toString();
         fileOutputStream = new FileOutputStream(path);
         return fileOutputStream;
     }

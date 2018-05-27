@@ -53,7 +53,7 @@ public class ExceptionTest {
 
         decryptor.decryption(password, new File(path3));
 
-        unpacker.unpack(new File(path6));
+        unpacker.unpack(new File(path6), new File(".").getCanonicalFile());
 
         FileInputStream fileInputStream1 = new FileInputStream(path1);
         FileInputStream fileInputStream2 = new FileInputStream(path2);
@@ -104,7 +104,7 @@ public class ExceptionTest {
 
         decryptor.decryption(password, new File(path3));
 
-        unpacker.unpack(new File(path6));
+        unpacker.unpack(new File(path6), new File(".").getCanonicalFile());
         FileInputStream fileInputStream1 = new FileInputStream(path1);
 
         assertEquals(fileInputStream1.available(), 0);
@@ -162,7 +162,7 @@ public class ExceptionTest {
 
             decryptor.decryption(password, new File(path3));
 
-            unpacker.unpack(new File(path6));
+            unpacker.unpack(new File(path6), new File(".").getCanonicalFile());
 
             FileInputStream fileInputStream1 = new FileInputStream(path1);
             FileInputStream fileInputStream2 = new FileInputStream(path2);

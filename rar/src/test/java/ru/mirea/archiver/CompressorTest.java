@@ -54,7 +54,7 @@ public class CompressorTest {
             File file2 = new File(path2);
             assertTrue(file2.renameTo(new File(path5)));
 
-            unpacker.unpack(new File(path3));
+            unpacker.unpack(new File(path3), new File(".").getCanonicalFile());
 
             FileInputStream fileInputStream1 = new FileInputStream(path1);
             FileInputStream fileInputStream2 = new FileInputStream(path2);

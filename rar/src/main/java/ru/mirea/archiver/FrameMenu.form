@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="ru.mirea.archiver.FrameMenu">
-  <grid id="27dc6" binding="panelMain" default-binding="true" layout-manager="GridLayoutManager" row-count="11" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="panelMain" default-binding="true" layout-manager="GridLayoutManager" row-count="13" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="10" left="20" bottom="0" right="20"/>
     <constraints>
       <xy x="20" y="20" width="600" height="471"/>
@@ -18,9 +18,9 @@
       <color color="-4504510"/>
     </border>
     <children>
-      <scrollpane id="9d6ad">
+      <scrollpane id="9d6ad" binding="jScrollPane">
         <constraints>
-          <grid row="1" column="0" row-span="10" col-span="1" vsize-policy="7" hsize-policy="7" anchor="8" fill="2" indent="0" use-parent-layout="false">
+          <grid row="1" column="0" row-span="12" col-span="1" vsize-policy="7" hsize-policy="7" anchor="8" fill="2" indent="0" use-parent-layout="false">
             <minimum-size width="300" height="383"/>
             <preferred-size width="330" height="222"/>
             <maximum-size width="300" height="382"/>
@@ -48,7 +48,7 @@
       </scrollpane>
       <component id="1d7f8" class="javax.swing.JButton" binding="buttonAccept">
         <constraints>
-          <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="12" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <actionCommand value="Accept"/>
@@ -91,7 +91,7 @@
       </component>
       <component id="86e9e" class="javax.swing.JCheckBox" binding="jCheckBoxCrypt" default-binding="true">
         <constraints>
-          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Crypt"/>
@@ -99,7 +99,7 @@
       </component>
       <component id="1b7e7" class="javax.swing.JPasswordField" binding="passwordEnter">
         <constraints>
-          <grid row="7" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="9" fill="1" indent="0" use-parent-layout="false">
+          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="9" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
@@ -117,7 +117,7 @@
       </component>
       <component id="82a95" class="javax.swing.JPasswordField" binding="passwordRepeat">
         <constraints>
-          <grid row="9" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="9" fill="1" indent="0" use-parent-layout="false">
+          <grid row="11" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="9" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
@@ -125,7 +125,7 @@
       </component>
       <component id="7b9e" class="javax.swing.JLabel">
         <constraints>
-          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="10" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="10" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Enter password"/>
@@ -133,18 +133,34 @@
       </component>
       <component id="5bc53" class="javax.swing.JLabel">
         <constraints>
-          <grid row="8" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="10" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="10" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="10" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Repeat password"/>
         </properties>
       </component>
-      <component id="d3f13" class="javax.swing.JCheckBox" binding="jCheckBoxCloud">
+      <component id="d7b61" class="javax.swing.JCheckBox" binding="jCheckBoxDeletePack">
         <constraints>
           <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
+          <text value="Delete files after packing"/>
+        </properties>
+      </component>
+      <component id="d3f13" class="javax.swing.JCheckBox" binding="jCheckBoxCloud">
+        <constraints>
+          <grid row="6" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
           <text value="Cloud"/>
+        </properties>
+      </component>
+      <component id="5b58c" class="javax.swing.JCheckBox" binding="jCheckBoxDeleteUnpack">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Delete archive after unpacking"/>
         </properties>
       </component>
     </children>

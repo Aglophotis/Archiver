@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="3" failures="0" name="ru.mirea.archiver.ExceptionTest" time="38.613" errors="0" skipped="0">
+<testsuite tests="3" failures="0" name="ru.mirea.archiver.ExceptionTest" time="97.798" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.8.0_144\jre\bin"/>
@@ -65,7 +65,7 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="ru.mirea.archiver.ExceptionTest" name="repeatSymblosTest" time="38.523"/>
-  <testcase classname="ru.mirea.archiver.ExceptionTest" name="emptyFileOneTest" time="0.038"/>
-  <testcase classname="ru.mirea.archiver.ExceptionTest" name="emptyFileTwoTest" time="0.052"/>
+  <testcase classname="ru.mirea.archiver.ExceptionTest" name="repeatSymblosTest" time="97.708"/>
+  <testcase classname="ru.mirea.archiver.ExceptionTest" name="emptyFileOneTest" time="0.039"/>
+  <testcase classname="ru.mirea.archiver.ExceptionTest" name="emptyFileTwoTest" time="0.051"/>
 </testsuite>
