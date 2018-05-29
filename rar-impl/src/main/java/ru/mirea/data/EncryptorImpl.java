@@ -10,7 +10,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class EncryptorImpl extends Cryptor implements Encryptor {
-    private final int BUFFER_SIZE = 64000;
     private Integer globalPriority = 0;
 
     @Override
@@ -18,6 +17,7 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
         ArrayList<Integer> lengthSubblock = createSizeBlock(password);
         BlockingQueue<Cryptor.BlockProperties> qIn = new LinkedBlockingQueue<>();
         PriorityQueue<Cryptor.BlockProperties> qOut = new PriorityQueue<>();
+        int BUFFER_SIZE = 64000;
         byte[] bytes = new byte[BUFFER_SIZE];
         byte[][] groupBytes = new byte[15][BUFFER_SIZE];
         int quantitySymbols;
@@ -77,13 +77,6 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
         fileInputStream.close();
         fileOutputStream.close();
 
-        qIn = null;
-        qOut = null;
-        blockEncryptor = null;
-        printer = null;
-        groupBytes = null;
-        bytes = null;
-
         File fileOriginal = new File(path1);
         if (!fileOriginal.delete()){
             return -9;
@@ -129,21 +122,16 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
                     StringBuilder binarySequence = byteToStr(block.length, block.bytes);
                     StringBuilder reverseSequence = crypt(binarySequence, lengthSubblock).reverse();
                     StringBuilder result = binStrToStr(reverseSequence);
-                    char[] characters = result.toString().toCharArray();
 
                     binarySequence.delete(0, binarySequence.length());
                     reverseSequence.delete(0, reverseSequence.length());
-                    result.delete(0, result.length());
-                    binarySequence = null;
-                    reverseSequence = null;
-                    result = null;
 
-                    byte[] tmpBytes = new byte[characters.length];
-                    for (int j = 0; j < characters.length; j++) {
-                        tmpBytes[j] = (byte) characters[j];
+                    byte[] tmpBytes = new byte[result.length()];
+                    for (int j = 0; j < result.length(); j++) {
+                        tmpBytes[j] = (byte) result.charAt(j);
                     }
 
-                    characters = null;
+                    result.delete(0, result.length());
 
                     block.bytes = tmpBytes;
                     block.length = tmpBytes.length;

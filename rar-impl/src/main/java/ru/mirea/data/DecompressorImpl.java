@@ -1,7 +1,5 @@
 package ru.mirea.data;
 
-import java.io.IOException;
-
 public class DecompressorImpl implements Decompressor {
     private Node createTree(String alphabet, StringBuilder tree){
         Node node = new Node();
@@ -36,8 +34,8 @@ public class DecompressorImpl implements Decompressor {
     }
 
     @Override
-    public String decompression(String[] strData, StringBuilder codedBlock) throws IOException {
-        StringBuilder trees = new StringBuilder(Integer.toBinaryString(strData[2].charAt(0)));
+    public StringBuilder decompression(String[] strData, StringBuilder codedBlock){
+        StringBuilder treeSequence = new StringBuilder(Integer.toBinaryString(strData[2].charAt(0)));
 
         for (int i = 1; i < strData[2].length(); i++){
             StringBuilder s1 = new StringBuilder(Integer.toBinaryString(strData[2].charAt(i)));
@@ -45,17 +43,17 @@ public class DecompressorImpl implements Decompressor {
             while (s2.length() + s1.length() != 8){
                 s2.append("0");
             }
-            trees.append(s2.append(s1));
+            treeSequence.append(s2.append(s1));
         }
 
-        Node root = createTree(strData[1], trees);
+        Node root = createTree(strData[1], treeSequence);
         if (root == null){
-            return "-1";
+            return new StringBuilder("-1");
         }
         return decode(codedBlock, root);
     }
 
-    private String decode(StringBuilder block, Node node) throws IOException {
+    private StringBuilder decode(StringBuilder block, Node node) {
         StringBuilder binarySequence = new StringBuilder();
         StringBuilder result = new StringBuilder();
         int sizeFirstByte = block.charAt(block.length() - 1) - '0';
@@ -79,12 +77,12 @@ public class DecompressorImpl implements Decompressor {
         for (int i = 0; i < binarySequence.length(); i++){
             if (binarySequence.charAt(i) == '0') {
                 if (tmpNode.leftChild == null)
-                    return "-2";
+                    return new StringBuilder("-2");
                 tmpNode = tmpNode.leftChild;
             }
             else {
                 if (tmpNode.rightChild == null)
-                    return "-2";
+                    return new StringBuilder("-2");
                 tmpNode = tmpNode.rightChild;
             }
             if (tmpNode.character != null) {
@@ -92,7 +90,7 @@ public class DecompressorImpl implements Decompressor {
                 tmpNode = node;
             }
         }
-        return result.toString();
+        return result;
     }
 
 

@@ -42,7 +42,7 @@ public class CompressorImpl implements Compressor {
     }
 
     @Override
-    public String compression(String block) {
+    public StringBuilder compression(StringBuilder block) {
         PriorityQueue<Node> tree = new PriorityQueue<>();
         HashMap<Character, Integer> hashMap = new HashMap<>();
         ArrayList<FrequenciesTable> frequencies = new ArrayList<>();
@@ -59,11 +59,11 @@ public class CompressorImpl implements Compressor {
         }
 
         if ((length / iSymbols) < 5 || iSymbols > 150){
-            return "-1";
+            return new StringBuilder("-1");
         }
 
         if (iSymbols == 1){
-            return "-2";
+            return new StringBuilder("-2");
         }
 
         if (frequencies.size() == 1){
@@ -88,10 +88,21 @@ public class CompressorImpl implements Compressor {
         bytes = encode(block, root);
         getInfo(root, bytes, meta, codeTree);
         codeTree = changeTree(codeTree);
-        result.append(meta.length() + ":" + meta + ":" + bitsToString(codeTree.toString()).length()
-                + ":" + bitsToString(codeTree.toString()) + ":" + (bytes.length()) + ":");
+
+        StringBuilder tmpTree = binStrToStr(codeTree);
+        result.append(meta.length());
+        result.append(":");
+        result.append(meta);
+        result.append(":");
+        result.append(tmpTree.length());
+        result.append(":");
+        result.append(tmpTree);
+        result.append(":");
+        result.append(bytes.length());
+        result.append(":");
         result.append(bytes.toString());
-        return result.toString();
+
+        return result;
     }
 
     private StringBuilder changeTree(StringBuilder tree){
@@ -112,41 +123,33 @@ public class CompressorImpl implements Compressor {
         return tmp;
     }
 
-    private String createCodeSequence(String text, Node node){
+    private StringBuilder createCodeSequence(StringBuilder text, Node node){
         String[] codes = codeTable(node);
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < text.length(); i++) {
             result.append(codes[text.charAt(i)]);
         }
 
-        return result.toString();
+        return result;
     }
 
-    private StringBuilder bitsToString(String binaryBlock){
+    private StringBuilder binStrToStr(StringBuilder binaryBlock){
         int codeSet = 8;
         StringBuilder charsetBytes = new StringBuilder();
-        int charByte = 0;
-        int length = binaryBlock.length() - 1;
-        for (int i = length; i >= 0; i--) {
-            if ((length - i) % codeSet == codeSet-1){
-                charByte += (binaryBlock.charAt(i) - '0')*Math.pow(2, (length - i) % codeSet);
-                charsetBytes.append((char)charByte);
-                charByte = 0;
-            }
-            else{
-                charByte += (binaryBlock.charAt(i) - '0')*Math.pow(2, (length - i) % codeSet);
-            }
+        int tmp = binaryBlock.length() % codeSet;
+        for (int i = binaryBlock.length(); i > tmp; i -= codeSet){
+            String tmpStr = binaryBlock.substring(i - codeSet, i);
+            charsetBytes.append((char)Integer.parseInt(tmpStr, 2));
         }
-
-        if ((binaryBlock.length() - 1) % codeSet != codeSet-1)
-            charsetBytes.append((char)charByte);
+        if (tmp != 0)
+            charsetBytes.append((char)Integer.parseInt(binaryBlock.substring(0, tmp), 2));
         charsetBytes.reverse();
         return charsetBytes;
     }
 
-    private StringBuilder encode(String block, Node node) {
-        String codeSequence = createCodeSequence(block, node);
-        StringBuilder charsetBytes = bitsToString(codeSequence);
+    private StringBuilder encode(StringBuilder block, Node node) {
+        StringBuilder codeSequence = createCodeSequence(block, node);
+        StringBuilder charsetBytes = binStrToStr(codeSequence);
         int sizeLastByte = 8 - (codeSequence.length() % 8);
         if (sizeLastByte == 8)
             sizeLastByte = 0;
@@ -160,7 +163,6 @@ public class CompressorImpl implements Compressor {
         codeTable(node, new StringBuilder(), codeTable);
         return codeTable;
     }
-
 
     private void codeTable(Node node, StringBuilder code, String[] codeTable) {
         if (node.character != null) {
@@ -178,7 +180,7 @@ public class CompressorImpl implements Compressor {
             if (current.character > 127){
                 char tmp = current.character;
                 int tmpByte = (256 + (byte)tmp);
-                StringBuilder str = bitsToString(Integer.toBinaryString(tmpByte));
+                StringBuilder str = binStrToStr(new StringBuilder(Integer.toBinaryString(tmpByte)));
                 alphabet.append(str.toString());
             }
             else

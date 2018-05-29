@@ -9,11 +9,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class PackerImpl implements Packer{
-    private final int BUFFER_SIZE_PACK = 64000;
     private Integer globalPriority = 0;
 
     @Override
     public int pack(File inputFiles, File outputFile, boolean isCompression) throws IOException, InterruptedException {
+        int BUFFER_SIZE_PACK = 64000;
         byte[] bytes = new byte[BUFFER_SIZE_PACK];
         int quantitySymbols;
         String path = outputFile.getAbsolutePath() + ".afk";
@@ -97,8 +97,6 @@ public class PackerImpl implements Packer{
 
             qIn.clear();
             qOut.clear();
-            qIn = null;
-            qOut = null;
 
             fileInputStream.close();
             fileOutputStream.close();
@@ -154,18 +152,14 @@ public class PackerImpl implements Packer{
                     if ("-1".equals(block.fileName))
                         continue;
 
-                    char[] tmpChar = new char[block.length];
-                    for (int j = 0; j < block.length; j++) {
-                        tmpChar[j] = (char) block.byteBlock[j];
-                    }
-                    String strBlock = new String(tmpChar);
+                    StringBuilder strBlock = new StringBuilder();
+                    for (int j = 0; j < block.length; j++)
+                        strBlock.append((char)block.byteBlock[j]);
 
-                    String s2 = compressor.compression(strBlock);
-                    tmpChar = null;
-                    strBlock = null;
+                    StringBuilder compressBlock = compressor.compression(strBlock);
                     String meta;
 
-                    if (s2.equals("-1")) {
+                    if (compressBlock.toString().equals("-1")) {
                         meta = (block.fileName.length() != 0) ? ("0" + block.fileName + block.length + ":") : ("3" + block.length + ":");
                         block.meta = meta;
                         synchronized (qOut) {
@@ -174,7 +168,7 @@ public class PackerImpl implements Packer{
                         continue;
                     }
 
-                    if (s2.equals("-2")) {
+                    if (compressBlock.toString().equals("-2")) {
                         meta = (block.fileName.length() != 0) ? ("4" + block.fileName + block.length  + ":") : ("5" + block.length + ":");
                         block.meta = meta;
                         block.length = 1;
@@ -184,13 +178,10 @@ public class PackerImpl implements Packer{
                         continue;
                     }
 
-                    char[] characters;
-                    characters = s2.toCharArray();
-                    byte[] tmpBytes = new byte[characters.length];
-                    for (int j = 0; j < characters.length; j++) {
-                        tmpBytes[j] = (byte) characters[j];
+                    byte[] tmpBytes = new byte[compressBlock.length()];
+                    for (int j = 0; j < compressBlock.length(); j++) {
+                        tmpBytes[j] = (byte) compressBlock.charAt(j);
                     }
-                    characters = null;
 
                     meta = (block.fileName.length() != 0) ? ("1" + block.fileName) : "2";
                     block.meta = meta;

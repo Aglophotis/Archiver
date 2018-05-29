@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class UnpackerImpl implements Unpacker {
@@ -139,9 +138,13 @@ public class UnpackerImpl implements Unpacker {
             fileOutputStream.close();
 
         int b = fileInputStream.read();
+        int i = 0;
         while (b != ':') {
+            if (i == 50)
+                return null;
             fileName.append((char)b);
             b = fileInputStream.read();
+            i++;
         }
 
         path = outputDirectory.getAbsolutePath();
@@ -164,31 +167,28 @@ public class UnpackerImpl implements Unpacker {
         int quantitySymbols = fileInputStream.read(bytes, 0, intData[2]);
         if (quantitySymbols != intData[2])
             return -7;
-        char[] characters = new char[bytes.length];
-        for (int j = 0; j < characters.length; j++) {
-            characters[j] = (char) bytes[j];
-        }
 
-        String result = new String(characters);
-        StringBuilder tmpStr = new StringBuilder(result);
-        result = decompressor.decompression(strData, tmpStr);
+        StringBuilder tmpStr = new StringBuilder();
+        for (int j = 0; j < bytes.length; j++)
+            tmpStr.append((char) bytes[j]);
 
-        if (result.equals("-1")){
+        StringBuilder result = decompressor.decompression(strData, tmpStr);
+
+        if (result.toString().equals("-1")){
             fileInputStream.close();
             fileOutputStream.close();
             return -1;
         }
-        if (result.equals("-2")){
+        if (result.toString().equals("-2")){
             fileInputStream.close();
             fileOutputStream.close();
             return -2;
         }
 
-        char[] tmpCharacters = result.toCharArray();
-        byte[] tmpBytes = new byte[tmpCharacters.length];
-        for (int j = 0; j < tmpCharacters.length; j++) {
-            tmpBytes[j] = (byte) tmpCharacters[j];
-        }
+        byte[] tmpBytes = new byte[result.length()];
+        for (int j = 0; j < result.length(); j++)
+            tmpBytes[j] = (byte) result.charAt(j);
+
         fileOutputStream.write(tmpBytes, 0, tmpBytes.length);
         return 0;
     }

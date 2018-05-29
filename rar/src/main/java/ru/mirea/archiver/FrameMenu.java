@@ -6,7 +6,6 @@ import ru.mirea.data.*;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -60,8 +59,6 @@ public class FrameMenu {
             jCheckBoxCompression.setEnabled(false);
             jCheckBoxDeleteUnpack.setEnabled(true);
             jCheckBoxDeletePack.setEnabled(false);
-            //inputItem.setText("Input archive");
-            //outputItem.setText("Output directory");
             jFileChooserOutput.setSelectedFile(new File(""));
             jFileChooserInput.setSelectedFiles(new File[]{new File("")});
             jFileChooserOutput.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -73,8 +70,6 @@ public class FrameMenu {
             jCheckBoxCompression.setEnabled(true);
             jCheckBoxDeleteUnpack.setEnabled(false);
             jCheckBoxDeletePack.setEnabled(true);
-            //inputItem.setText("Input files");
-            //outputItem.setText("Output file");
             jFileChooserOutput.setSelectedFile(new File(""));
             jFileChooserInput.setSelectedFiles(new File[]{new File("")});
             jFileChooserOutput.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -199,7 +194,6 @@ public class FrameMenu {
                 printDate();
                 logArea.append(item.getName() + " was packed\n");
                 updateFrame();
-                packer = null;
                 System.gc();
             }
 
@@ -215,7 +209,6 @@ public class FrameMenu {
                 printDate();
                 logArea.append(outputFile.getName() + ".afk was encrypted\n");
                 updateFrame();
-                encryptor = null;
                 System.gc();
             }
             if (flags[4]) {
@@ -242,7 +235,6 @@ public class FrameMenu {
                         printError(error);
                         return -1;
                     }
-                    decryptor = null;
                     printDate();
                     logArea.append(item.getName() + " was decrypted\n");
                     updateFrame();
@@ -261,7 +253,6 @@ public class FrameMenu {
                     printDate();
                     logArea.append(item.getName() + " was unpacked\n");
                     updateFrame();
-                    unpacker = null;
                     System.gc();
                 }
             } else {
@@ -277,7 +268,6 @@ public class FrameMenu {
                     printDate();
                     logArea.append(item.getName() + " was unpacked\n");
                     updateFrame();
-                    unpacker = null;
                     System.gc();
                 }
             }

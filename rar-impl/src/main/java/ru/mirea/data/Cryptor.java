@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 
-public abstract class Cryptor {
+abstract class Cryptor {
     protected StringBuilder crypt(StringBuilder binarySequence, ArrayList<Integer> lengthSubblock){
         int i = 0;
         int k = 0;
@@ -107,8 +107,6 @@ public abstract class Cryptor {
                                 BlockProperties block = qOut.poll();
                                 fileOutputStream.write(block.bytes, 0, block.length);
                                 ++priority;
-                                block.bytes = null;
-                                block = null;
                             }
                         }
                     }

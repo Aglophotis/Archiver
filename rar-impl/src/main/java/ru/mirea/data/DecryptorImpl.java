@@ -76,13 +76,6 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
         fileOutputStream.close();
         fileInputStream.close();
 
-        qIn = null;
-        qOut = null;
-        blockDecryptor = null;
-        printer = null;
-        groupBytes = null;
-        bytes = null;
-
         return 0;
     }
 
@@ -121,19 +114,16 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
 
                     StringBuilder reverseSequence = crypt(binarySequence, lengthSubblock);
                     StringBuilder result = binStrToStr(reverseSequence);
-                    char[] characters = result.toString().toCharArray();
-                    byte[] tmpBytes = new byte[characters.length];
-                    for (int j = 0; j < characters.length; j++) {
-                        tmpBytes[j] = (byte) characters[j];
+
+                    byte[] tmpBytes = new byte[result.length()];
+                    for (int j = 0; j < result.length(); j++) {
+                        tmpBytes[j] = (byte) result.charAt(j);
                     }
+
 
                     binarySequence.delete(0, binarySequence.length());
                     reverseSequence.delete(0, reverseSequence.length());
                     result.delete(0, result.length());
-                    binarySequence = null;
-                    reverseSequence = null;
-                    result = null;
-                    characters = null;
 
                     block.bytes = tmpBytes;
                     block.length = tmpBytes.length;
