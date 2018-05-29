@@ -88,7 +88,7 @@ public class CompressorTest {
     private String generateStringLong(int size){
         StringBuilder res = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            res.append((char) (r.nextInt(1024)));
+            res.append((char) (r.nextInt(255)));
         }
         return res.toString();
     }

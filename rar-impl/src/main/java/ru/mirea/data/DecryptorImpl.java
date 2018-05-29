@@ -120,7 +120,7 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
                     binarySequence = binarySequence.reverse();
 
                     StringBuilder reverseSequence = crypt(binarySequence, lengthSubblock);
-                    StringBuilder result = bitsToString(reverseSequence.toString());
+                    StringBuilder result = binStrToStr(reverseSequence);
                     char[] characters = result.toString().toCharArray();
                     byte[] tmpBytes = new byte[characters.length];
                     for (int j = 0; j < characters.length; j++) {

@@ -58,7 +58,7 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
         }
         blockEncryptor.close();
 
-        for (int j = 0; j < 10; j++){
+        for (int j = 0; j < 4; j++){
             qIn.put(new Cryptor.BlockProperties(-1, bytes));
         }
 
@@ -128,7 +128,7 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
 
                     StringBuilder binarySequence = byteToStr(block.length, block.bytes);
                     StringBuilder reverseSequence = crypt(binarySequence, lengthSubblock).reverse();
-                    StringBuilder result = bitsToString(reverseSequence.toString());
+                    StringBuilder result = binStrToStr(reverseSequence);
                     char[] characters = result.toString().toCharArray();
 
                     binarySequence.delete(0, binarySequence.length());

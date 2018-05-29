@@ -9,24 +9,20 @@ public abstract class Cryptor {
     protected StringBuilder crypt(StringBuilder binarySequence, ArrayList<Integer> lengthSubblock){
         int i = 0;
         int k = 0;
+        int pointer = lengthSubblock.get(0);
+        int size = lengthSubblock.size();
         StringBuilder reverseSequence = new StringBuilder();
-        while (i < binarySequence.length()){
+        while (pointer < binarySequence.length()){
             StringBuilder tmpStr = new StringBuilder();
-            if (i + lengthSubblock.get(k % lengthSubblock.size()) < binarySequence.length()) {
-                for (int j = 0; j < lengthSubblock.get(k % lengthSubblock.size()); ++j, ++i) {
-                    tmpStr.append(binarySequence.charAt(i));
-                }
-            }
-            else {
-                for (int j = i; j < binarySequence.length(); j++, i++){
-                    tmpStr.append(binarySequence.charAt(i));
-                }
-            }
+            tmpStr.append(binarySequence.substring(i, pointer));
             ++k;
+            i = pointer;
             reverseSequence.append(tmpStr.reverse());
-            tmpStr.delete(0, tmpStr.length());
-            tmpStr = null;
+            pointer = i + lengthSubblock.get(k % size);
         }
+        StringBuilder tmpStr = new StringBuilder();
+        tmpStr.append(binarySequence.substring(i, binarySequence.length()));
+        reverseSequence.append(tmpStr.reverse());
         return reverseSequence;
     }
 
@@ -34,50 +30,41 @@ public abstract class Cryptor {
         ArrayList<Integer> lengthSubblock = new ArrayList<>();
         int factor = (password.length() % 8) + 1;
         for (int i = 0; i < password.length(); i++){
-            int tmp = (byte)password.charAt(i);
+            byte tmp = (byte)password.charAt(i);
             if (tmp < 15 && tmp > 0)
                 throw new IOException("Incorrect password");
-            if (tmp > 0)
-                lengthSubblock.add(tmp*factor);
-            else
-                lengthSubblock.add((256 + tmp)*factor);
+            lengthSubblock.add(unsignedToBytes(tmp)*factor);
         }
         return lengthSubblock;
     }
 
-    protected StringBuilder bitsToString(String binaryBlock){
+    protected StringBuilder binStrToStr(StringBuilder binaryBlock){
         int codeSet = 8;
         StringBuilder charsetBytes = new StringBuilder();
-        int charByte = 0;
-        int length = binaryBlock.length() - 1;
-        for (int i = length; i >= 0; i--) {
-            if ((length - i) % codeSet == codeSet-1){
-                charByte += (binaryBlock.charAt(i) - '0')*Math.pow(2, (length - i) % codeSet);
-                charsetBytes.append((char)charByte);
-                charByte = 0;
-            }
-            else{
-                charByte += (binaryBlock.charAt(i) - '0')*Math.pow(2, (length - i) % codeSet);
-            }
+        int tmp = binaryBlock.length() % codeSet;
+        for (int i = binaryBlock.length(); i > tmp; i -= codeSet){
+            String tmpStr = binaryBlock.substring(i - codeSet, i);
+            charsetBytes.append((char)Integer.parseInt(tmpStr, 2));
         }
-
-        if ((binaryBlock.length() - 1) % codeSet != codeSet-1)
-            charsetBytes.append((char)charByte);
+        if (tmp != 0)
+            charsetBytes.append((char)Integer.parseInt(binaryBlock.substring(0, tmp), 2));
         charsetBytes.reverse();
         return charsetBytes;
+    }
+
+    protected int unsignedToBytes(byte b) {
+        return b & 0xFF;
     }
 
     protected StringBuilder byteToStr(int length, byte[] bytes){
         StringBuilder binarySequence = new StringBuilder();
         for (int i = 0; i < length; i++) {
-            int tmpByte = (bytes[i] < 0) ? (256 + bytes[i]) : bytes[i];
-            String str1 = Integer.toBinaryString(tmpByte);
+            StringBuilder str1 = new StringBuilder(Integer.toBinaryString(unsignedToBytes(bytes[i])));
             StringBuilder str2 = new StringBuilder();
             while (str1.length() + str2.length() < 8) {
                 str2.append("0");
             }
             binarySequence.append(str2.append(str1));
-            str2.delete(0, str2.length());
         }
         return binarySequence;
     }

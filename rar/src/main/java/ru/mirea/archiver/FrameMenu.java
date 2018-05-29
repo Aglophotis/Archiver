@@ -298,6 +298,7 @@ public class FrameMenu {
     }
 
     private void updateFrame() {
+        jScrollPane.setViewportView(logArea);
         JScrollBar vBar = jScrollPane.getVerticalScrollBar();
         vBar.setValue(vBar.getMaximum());
         logArea.scrollRectToVisible(logArea.getVisibleRect());
