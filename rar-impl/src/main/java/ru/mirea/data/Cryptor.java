@@ -33,7 +33,10 @@ abstract class Cryptor {
             byte tmp = (byte)password.charAt(i);
             if (tmp < 15 && tmp > 0)
                 throw new IOException("Incorrect password");
-            lengthSubblock.add(unsignedToBytes(tmp)*factor);
+            if (tmp > 0)
+                lengthSubblock.add(tmp*factor);
+            else
+                lengthSubblock.add((256 + tmp)*factor);
         }
         return lengthSubblock;
     }
@@ -52,14 +55,11 @@ abstract class Cryptor {
         return charsetBytes;
     }
 
-    protected int unsignedToBytes(byte b) {
-        return b & 0xFF;
-    }
-
     protected StringBuilder byteToStr(int length, byte[] bytes){
         StringBuilder binarySequence = new StringBuilder();
         for (int i = 0; i < length; i++) {
-            StringBuilder str1 = new StringBuilder(Integer.toBinaryString(unsignedToBytes(bytes[i])));
+            int tmpByte = (bytes[i] < 0) ? (256 + bytes[i]) : bytes[i];
+            StringBuilder str1 = new StringBuilder(Integer.toBinaryString(tmpByte));
             StringBuilder str2 = new StringBuilder();
             while (str1.length() + str2.length() < 8) {
                 str2.append("0");

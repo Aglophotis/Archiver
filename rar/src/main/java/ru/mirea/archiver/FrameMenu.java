@@ -105,15 +105,28 @@ public class FrameMenu {
                 logArea.append("Error: no input files selected\n");
                 return;
             }
+            if (inputFiles.length == 1) {
+                if (inputFiles[0].getName().equals("")) {
+                    printDate();
+                    logArea.append("Error: no input files selected\n");
+                    return;
+                }
+            }
+
             for (File file : inputFiles) {
                 if (!file.exists()) {
                     printDate();
                     logArea.append("File not found: " + file.getName() + "\n");
                     return;
                 }
+                if (file.equals(outputFile)) {
+                    printDate();
+                    logArea.append("Input file: " + file.getAbsolutePath() + " equals output file\n");
+                    return;
+                }
             }
             outputFile = jFileChooserOutput.getSelectedFile();
-            if (outputFile == null) {
+            if (outputFile == null || outputFile.getName().equals("")) {
                 printDate();
                 logArea.append("Error: no output file selected\n");
                 return;
@@ -335,7 +348,7 @@ public class FrameMenu {
                 logArea.append("Error: can not delete the input archive\n");
                 break;
             case -13:
-                logArea.append("Error: directory is not found\n");
+                logArea.append("Error: path or filename are incorrect\n");
                 break;
             default:
                 logArea.append("Error: unknown error\n");

@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UnpackerImpl implements Unpacker {
 
@@ -140,7 +142,7 @@ public class UnpackerImpl implements Unpacker {
         int b = fileInputStream.read();
         int i = 0;
         while (b != ':') {
-            if (i == 50)
+            if (i == 100)
                 return null;
             fileName.append((char)b);
             b = fileInputStream.read();
@@ -152,8 +154,17 @@ public class UnpackerImpl implements Unpacker {
             return null;
         }
         path += "\\" + fileName.toString();
-        fileOutputStream = new FileOutputStream(path);
+        String path1 = new String(path.getBytes("ISO-8859-1"), "cp1251");
+        if (!isFileNameCorrect(new String(fileName.toString().getBytes("ISO-8859-1"), "cp1251")))
+            return null;
+        fileOutputStream = new FileOutputStream(path1);
         return fileOutputStream;
+    }
+
+    private boolean isFileNameCorrect(String name){
+        Pattern pattern = Pattern.compile("(.+)?[><\\|\\?*/:\\\\\"](.+)?");
+        Matcher matcher = pattern.matcher(name);
+        return !matcher.find();
     }
 
     private int unpackWithCompression(FileInputStream fileInputStream, FileOutputStream fileOutputStream) throws Exception {
