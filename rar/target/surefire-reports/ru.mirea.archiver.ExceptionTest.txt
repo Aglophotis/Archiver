@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: ru.mirea.archiver.ExceptionTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 171.402 sec
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 103.827 sec

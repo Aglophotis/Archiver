@@ -13,7 +13,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class PackerImpl implements Packer{
     private Integer globalPriority = 0;
     private Charset charset = Charset.forName("Windows-1251");
-    private int BUFFER_SIZE_PACK = 64000;
+    private int BUFFER_SIZE = 64000;
 
     @Override
     public int pack(File inputFile, File outputFile, boolean isCompression) throws IOException, InterruptedException {
@@ -32,13 +32,14 @@ public class PackerImpl implements Packer{
     }
 
     private int packWithCompression(File inputFile, FileOutputStream fileOutputStream) throws IOException, InterruptedException {
-        byte[] bytes = new byte[BUFFER_SIZE_PACK];
+        byte[][] groupBytes = new byte[15][BUFFER_SIZE];
+        byte[] bytes = new byte[BUFFER_SIZE];
         int quantitySymbols;
         String path = inputFile.getAbsolutePath();
 
         FileInputStream fileInputStream = new FileInputStream(path);
-        BlockingQueue<BlockProperties> qIn = new LinkedBlockingQueue<>();
-        PriorityQueue<BlockProperties> qOut = new PriorityQueue<>();
+        BlockingQueue<BlockComponents> qIn = new LinkedBlockingQueue<>();
+        PriorityQueue<BlockComponents> qOut = new PriorityQueue<>();
         globalPriority = 0;
 
         String fileName = inputFile.getName() + ":";
@@ -58,11 +59,12 @@ public class PackerImpl implements Packer{
         thread4.start();
         threadPrinter.start();
 
-        while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE_PACK)) > 0) {
-            byte[] byteBlock = bytes.clone();
-            while (qIn.size() > 10)
+        int i = 0;
+        while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE)) > 0) {
+            groupBytes[i%15] = bytes.clone();
+            while (qIn.size() > 5)
                 Thread.sleep(1);
-            qIn.put(new BlockProperties(fileName, quantitySymbols, byteBlock));
+            qIn.put(new BlockComponents(fileName, quantitySymbols, groupBytes[i%15]));
             fileName = "";
         }
 
@@ -72,7 +74,7 @@ public class PackerImpl implements Packer{
         packer.close();
 
         for (int j = 0; j < 4; j++){
-            qIn.put(new BlockProperties("-1", -1, bytes));
+            qIn.put(new BlockComponents("-1", -1, groupBytes[i%15]));
         }
 
         thread1.join();
@@ -96,7 +98,7 @@ public class PackerImpl implements Packer{
     }
 
     private int packWithoutCompression(File inputFile, FileOutputStream fileOutputStream) throws IOException {
-        byte[] bytes = new byte[BUFFER_SIZE_PACK];
+        byte[] bytes = new byte[BUFFER_SIZE];
         int quantitySymbols;
         ByteBuffer buf = charset.encode(getInfo(inputFile));
         byte[] meta = buf.array();
@@ -104,7 +106,7 @@ public class PackerImpl implements Packer{
         fileOutputStream.write(meta, 0, meta.length);
         FileInputStream fileInputStream = new FileInputStream(path);
 
-        while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE_PACK)) > 0) {
+        while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE)) > 0) {
             fileOutputStream.write(bytes, 0, quantitySymbols);
         }
 
@@ -113,20 +115,20 @@ public class PackerImpl implements Packer{
         return 0;
     }
 
-    private class BlockProperties implements Comparable<BlockProperties>{
+    private class BlockComponents implements Comparable<BlockComponents>{
         private String fileName;
         private StringBuilder meta;
         private int length;
         private int priority;
         private byte[] byteBlock;
 
-        BlockProperties(String fileName, int length, byte[] byteBlock){
+        BlockComponents(String fileName, int length, byte[] byteBlock){
             this.fileName = fileName;
             this.length = length;
             this.byteBlock = byteBlock;
         }
 
-        public int compareTo(BlockProperties block) {
+        public int compareTo(BlockComponents block) {
             return priority - block.priority;
         }
     }
@@ -134,10 +136,10 @@ public class PackerImpl implements Packer{
 
     private class BlockPacker implements Runnable {
         private boolean isThreadActive = true;
-        BlockingQueue<BlockProperties> qIn;
-        PriorityQueue<BlockProperties> qOut;
+        BlockingQueue<BlockComponents> qIn;
+        PriorityQueue<BlockComponents> qOut;
 
-        BlockPacker(BlockingQueue<BlockProperties> qIn, PriorityQueue<BlockProperties> qOut) {
+        BlockPacker(BlockingQueue<BlockComponents> qIn, PriorityQueue<BlockComponents> qOut) {
             this.qIn = qIn;
             this.qOut = qOut;
         }
@@ -147,14 +149,12 @@ public class PackerImpl implements Packer{
             Compressor compressor = new CompressorImpl();
             while (isThreadActive) {
                 try {
-                    BlockProperties block;
+                    BlockComponents block;
                     synchronized (qIn){
                         synchronized (globalPriority){
                             block = qIn.take();
                             block.priority = globalPriority;
                             ++globalPriority;
-                            if (globalPriority % 100 == 0)
-                                System.gc();
                         }
                     }
 
@@ -179,7 +179,7 @@ public class PackerImpl implements Packer{
 
                     if (compressBlock.toString().equals("-2")) {
                         block.meta = (block.fileName.length() != 0) ?
-                               new StringBuilder("4" + block.fileName + block.length  + ":") :
+                                new StringBuilder("4" + block.fileName + block.length  + ":") :
                                 new StringBuilder("5" + block.length + ":");
                         block.length = 1;
                         synchronized (qOut) {
@@ -188,16 +188,15 @@ public class PackerImpl implements Packer{
                         continue;
                     }
 
-                    byte[] tmpBytes = new byte[compressBlock.length()];
+                    block.byteBlock = new byte[compressBlock.length()];
                     for (int j = 0; j < compressBlock.length(); j++) {
-                        tmpBytes[j] = (byte) compressBlock.charAt(j);
+                        block.byteBlock[j] = (byte) compressBlock.charAt(j);
                     }
 
+                    block.length = block.byteBlock.length;
                     block.meta = (block.fileName.length() != 0) ?
                             new StringBuilder("1" + block.fileName) :
                             new StringBuilder("2");
-                    block.byteBlock = tmpBytes;
-                    block.length = tmpBytes.length;
                     synchronized (qOut) {
                         qOut.add(block);
                     }
@@ -217,11 +216,11 @@ public class PackerImpl implements Packer{
     private class Printer implements Runnable{
         private int sleepTime;
         private boolean isThreadActive = true;
-        PriorityQueue<BlockProperties> qOut;
+        PriorityQueue<BlockComponents> qOut;
         FileOutputStream fileOutputStream;
         int priority = 0;
 
-        Printer(int sleepTime, PriorityQueue<BlockProperties> qOut, FileOutputStream fileOutputStream){
+        Printer(int sleepTime, PriorityQueue<BlockComponents> qOut, FileOutputStream fileOutputStream){
             this.sleepTime = sleepTime;
             this.qOut = qOut;
             this.fileOutputStream = fileOutputStream;
@@ -234,7 +233,7 @@ public class PackerImpl implements Packer{
                     synchronized (qOut) {
                         if (!qOut.isEmpty()) {
                             if (qOut.peek().priority == priority) {
-                                BlockProperties block = qOut.poll();
+                                BlockComponents block = qOut.poll();
                                 ByteBuffer buf = charset.encode(block.meta.toString());
                                 byte[] meta = buf.array();
                                 fileOutputStream.write(meta, 0, block.meta.length());

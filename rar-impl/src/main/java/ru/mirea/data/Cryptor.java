@@ -26,27 +26,21 @@ abstract class Cryptor {
         return reverseSequence;
     }
 
-    protected ArrayList<Integer> createSizeBlock(String password) throws IOException {
-        ArrayList<Integer> lengthSubblock = new ArrayList<>();
-        int factor = (password.length() % 8) + 1;
+    protected ArrayList<Integer> createSizeSubblocks(String password){
+        ArrayList<Integer> arrOfSizeSubblocks = new ArrayList<>();
+        int factor = (password.length() % 8 == 0) ? password.length() + 2 : password.length();
         for (int i = 0; i < password.length(); i++){
-            byte tmp = (byte)password.charAt(i);
-            if (tmp < 15 && tmp > 0)
-                throw new IOException("Incorrect password");
-            if (tmp > 0)
-                lengthSubblock.add(tmp*factor);
-            else
-                lengthSubblock.add((256 + tmp)*factor);
+            arrOfSizeSubblocks.add(((int)password.charAt(i)) + factor);
         }
-        return lengthSubblock;
+        return arrOfSizeSubblocks;
     }
 
     protected StringBuilder binStrToStr(StringBuilder binaryBlock){
-        int codeSet = 8;
+        int charSize = 8;
         StringBuilder charsetBytes = new StringBuilder();
-        int tmp = binaryBlock.length() % codeSet;
-        for (int i = binaryBlock.length(); i > tmp; i -= codeSet){
-            String tmpStr = binaryBlock.substring(i - codeSet, i);
+        int tmp = binaryBlock.length() % charSize;
+        for (int i = binaryBlock.length(); i > tmp; i -= charSize){
+            String tmpStr = binaryBlock.substring(i - charSize, i);
             charsetBytes.append((char)Integer.parseInt(tmpStr, 2));
         }
         if (tmp != 0)

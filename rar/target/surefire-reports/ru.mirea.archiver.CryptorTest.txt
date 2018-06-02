@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: ru.mirea.archiver.CryptorTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 28.009 sec
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 34.7 sec

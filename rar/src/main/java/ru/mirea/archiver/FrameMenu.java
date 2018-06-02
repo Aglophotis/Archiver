@@ -113,15 +113,15 @@ public class FrameMenu {
                 }
             }
 
-            for (File file : inputFiles) {
-                if (!file.exists()) {
+            for (File item : inputFiles) {
+                if (!item.exists()) {
                     printDate();
-                    logArea.append("File not found: " + file.getName() + "\n");
+                    logArea.append("File not found: " + item.getName() + "\n");
                     return;
                 }
-                if (file.equals(outputFile)) {
+                if (item.equals(outputFile) || (new File(outputFile.getAbsolutePath() + ".afk").equals(item))) {
                     printDate();
-                    logArea.append("Input file: " + file.getAbsolutePath() + " equals output file\n");
+                    logArea.append("Input file: " + item.getAbsolutePath() + " equals output file\n");
                     return;
                 }
             }
@@ -149,6 +149,13 @@ public class FrameMenu {
                     printDate();
                     logArea.append("Error: repeated password is not equal to the entered password\n");
                     return;
+                }
+                for (int i = 0; i < password.length(); i++) {
+                    char tmpChar = password.charAt(i);
+                    if (tmpChar < 33 || tmpChar > 125) {
+                        printError(-14);
+                        return;
+                    }
                 }
             }
             logArea.append("Start: \n");
@@ -258,8 +265,8 @@ public class FrameMenu {
                     updateFrame();
                     if ((error = unpacker.unpack(new File(item.getAbsolutePath() + "dec"), outputFile)) != 0) {
                         printError(error);
-                        if (item.getName().endsWith(".afkdec"))
-                            if (!item.delete())
+                        if (new File(item.getAbsolutePath() + "dec").exists())
+                            if (!(new File(item.getAbsolutePath() + "dec").delete()))
                                 printError(-8);
                         return -1;
                     }
@@ -349,6 +356,9 @@ public class FrameMenu {
                 break;
             case -13:
                 logArea.append("Error: path or filename are incorrect\n");
+                break;
+            case -14:
+                logArea.append("Error: password is incorrect\n");
                 break;
             default:
                 logArea.append("Error: unknown error\n");

@@ -14,7 +14,7 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
     private Integer globalPriority = 0;
 
     public int decryption(String password, File inputFile) throws IOException, InterruptedException {
-        ArrayList<Integer> lengthSubblock = createSizeBlock(password);
+        ArrayList<Integer> arrOfSizeSubblocks = createSizeSubblocks(password);
         BlockingQueue<BlockProperties> qIn = new LinkedBlockingQueue<>();
         PriorityQueue<BlockProperties> qOut = new PriorityQueue<>();
         byte[] bytes = new byte[BUFFER_SIZE];
@@ -28,7 +28,7 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
         String path2 = inputFile.getAbsolutePath() + "dec";
         FileOutputStream fileOutputStream = new FileOutputStream(path2);
 
-        BlockDecryptor blockDecryptor = new BlockDecryptor(qIn, qOut, lengthSubblock);
+        BlockDecryptor blockDecryptor = new BlockDecryptor(qIn, qOut, arrOfSizeSubblocks);
         Printer printer = new Printer(1, qOut, fileOutputStream);
         Thread thread1 = new Thread(blockDecryptor);
         Thread thread2 = new Thread(blockDecryptor);
@@ -58,7 +58,7 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
         blockDecryptor.close();
 
         for (int j = 0; j < 10; j++){
-            qIn.put(new BlockProperties(-1, bytes));
+            qIn.put(new BlockProperties(-1, groupBytes[i%15]));
         }
 
         thread1.join();
@@ -83,12 +83,12 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
         private boolean isThreadActive = true;
         BlockingQueue<BlockProperties> qIn;
         PriorityQueue<BlockProperties> qOut;
-        ArrayList<Integer> lengthSubblock;
+        ArrayList<Integer> arrOfSizeSubblocks;
 
-        BlockDecryptor(BlockingQueue<BlockProperties> qIn, PriorityQueue<BlockProperties> qOut, ArrayList<Integer> lengthSubblock) {
+        BlockDecryptor(BlockingQueue<BlockProperties> qIn, PriorityQueue<BlockProperties> qOut, ArrayList<Integer> arrOfSizeSubblocks) {
             this.qIn = qIn;
             this.qOut = qOut;
-            this.lengthSubblock = lengthSubblock;
+            this.arrOfSizeSubblocks = arrOfSizeSubblocks;
         }
 
         @Override
@@ -101,8 +101,6 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
                             block = qIn.take();
                             block.priority = globalPriority;
                             ++globalPriority;
-                            if (globalPriority % 51 == 0)
-                                System.gc();
                         }
                     }
 
@@ -112,21 +110,19 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
                     StringBuilder binarySequence = byteToStr(block.length, block.bytes);
                     binarySequence = binarySequence.reverse();
 
-                    StringBuilder reverseSequence = crypt(binarySequence, lengthSubblock);
+                    StringBuilder reverseSequence = crypt(binarySequence, arrOfSizeSubblocks);
                     StringBuilder result = binStrToStr(reverseSequence);
 
-                    byte[] tmpBytes = new byte[result.length()];
+                    block.bytes = new byte[result.length()];
                     for (int j = 0; j < result.length(); j++) {
-                        tmpBytes[j] = (byte) result.charAt(j);
+                        block.bytes[j] = (byte) result.charAt(j);
                     }
-
+                    block.length = block.bytes.length;
 
                     binarySequence.delete(0, binarySequence.length());
                     reverseSequence.delete(0, reverseSequence.length());
                     result.delete(0, result.length());
 
-                    block.bytes = tmpBytes;
-                    block.length = tmpBytes.length;
                     synchronized (qOut){
                         qOut.add(block);
                     }

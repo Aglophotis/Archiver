@@ -14,7 +14,7 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
 
     @Override
     public int encryption(String password, File outputFile) throws IOException, InterruptedException {
-        ArrayList<Integer> lengthSubblock = createSizeBlock(password);
+        ArrayList<Integer> arrOfSizeSubblocks = createSizeSubblocks(password);
         BlockingQueue<Cryptor.BlockProperties> qIn = new LinkedBlockingQueue<>();
         PriorityQueue<Cryptor.BlockProperties> qOut = new PriorityQueue<>();
         int BUFFER_SIZE = 64000;
@@ -29,7 +29,7 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
         String path2 = outputFile.getAbsolutePath() + ".afkenc";
         FileOutputStream fileOutputStream = new FileOutputStream(path2);
 
-        BlockEncryptor blockEncryptor = new BlockEncryptor(qIn, qOut, lengthSubblock);
+        BlockEncryptor blockEncryptor = new BlockEncryptor(qIn, qOut, arrOfSizeSubblocks);
         Cryptor.Printer printer = new Cryptor.Printer(1, qOut, fileOutputStream);
         Thread thread1 = new Thread(blockEncryptor);
         Thread thread2 = new Thread(blockEncryptor);
@@ -59,7 +59,7 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
         blockEncryptor.close();
 
         for (int j = 0; j < 4; j++){
-            qIn.put(new Cryptor.BlockProperties(-1, bytes));
+            qIn.put(new Cryptor.BlockProperties(-1, groupBytes[i%15]));
         }
 
         thread1.join();
@@ -93,12 +93,12 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
         private boolean isThreadActive = true;
         BlockingQueue<Cryptor.BlockProperties> qIn;
         PriorityQueue<Cryptor.BlockProperties> qOut;
-        ArrayList<Integer> lengthSubblock;
+        ArrayList<Integer> arrOfSizeSubblocks;
 
-        BlockEncryptor(BlockingQueue<Cryptor.BlockProperties> qIn, PriorityQueue<Cryptor.BlockProperties> qOut, ArrayList<Integer> lengthSubblock) {
+        BlockEncryptor(BlockingQueue<Cryptor.BlockProperties> qIn, PriorityQueue<Cryptor.BlockProperties> qOut, ArrayList<Integer> arrOfSizeSubblocks) {
             this.qIn = qIn;
             this.qOut = qOut;
-            this.lengthSubblock = lengthSubblock;
+            this.arrOfSizeSubblocks = arrOfSizeSubblocks;
         }
 
         @Override
@@ -111,8 +111,6 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
                             block = qIn.take();
                             block.priority = globalPriority;
                             ++globalPriority;
-                            if (globalPriority % 50 == 0)
-                                System.gc();
                         }
                     }
 
@@ -120,21 +118,19 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
                         continue;
 
                     StringBuilder binarySequence = byteToStr(block.length, block.bytes);
-                    StringBuilder reverseSequence = crypt(binarySequence, lengthSubblock).reverse();
+                    StringBuilder reverseSequence = crypt(binarySequence, arrOfSizeSubblocks).reverse();
                     StringBuilder result = binStrToStr(reverseSequence);
+
+                    block.bytes = new byte[result.length()];
+                    for (int j = 0; j < result.length(); j++) {
+                        block.bytes[j] = (byte) result.charAt(j);
+                    }
+                    block.length = block.bytes.length;
 
                     binarySequence.delete(0, binarySequence.length());
                     reverseSequence.delete(0, reverseSequence.length());
-
-                    byte[] tmpBytes = new byte[result.length()];
-                    for (int j = 0; j < result.length(); j++) {
-                        tmpBytes[j] = (byte) result.charAt(j);
-                    }
-
                     result.delete(0, result.length());
 
-                    block.bytes = tmpBytes;
-                    block.length = tmpBytes.length;
                     synchronized (qOut){
                         qOut.add(block);
                     }

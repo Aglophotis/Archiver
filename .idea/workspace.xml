@@ -4,27 +4,11 @@
     <list default="true" id="464cc10d-5b99-4776-aa6f-d86f38b2dad5" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/rar-api/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/rar-api/target/maven-archiver/pom.properties" />
       <change beforePath="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/Cryptor.java" afterPath="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/Cryptor.java" />
+      <change beforePath="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/DecryptorImpl.java" afterPath="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/DecryptorImpl.java" />
+      <change beforePath="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/EncryptorImpl.java" afterPath="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/EncryptorImpl.java" />
       <change beforePath="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/PackerImpl.java" afterPath="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/PackerImpl.java" />
-      <change beforePath="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/UnpackerImpl.java" afterPath="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/UnpackerImpl.java" />
-      <change beforePath="$PROJECT_DIR$/rar-impl/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/rar-impl/target/maven-archiver/pom.properties" />
-      <change beforePath="$PROJECT_DIR$/rar-impl/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/rar-impl/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" afterPath="" />
       <change beforePath="$PROJECT_DIR$/rar/src/main/java/ru/mirea/archiver/FrameMenu.java" afterPath="$PROJECT_DIR$/rar/src/main/java/ru/mirea/archiver/FrameMenu.java" />
-      <change beforePath="$PROJECT_DIR$/rar/target/maven-archiver/pom.properties" afterPath="$PROJECT_DIR$/rar/target/maven-archiver/pom.properties" />
-      <change beforePath="$PROJECT_DIR$/rar/target/surefire-reports/TEST-ru.mirea.archiver.CompressorTest.xml" afterPath="$PROJECT_DIR$/rar/target/surefire-reports/TEST-ru.mirea.archiver.CompressorTest.xml" />
-      <change beforePath="$PROJECT_DIR$/rar/target/surefire-reports/TEST-ru.mirea.archiver.CryptorTest.xml" afterPath="$PROJECT_DIR$/rar/target/surefire-reports/TEST-ru.mirea.archiver.CryptorTest.xml" />
-      <change beforePath="$PROJECT_DIR$/rar/target/surefire-reports/TEST-ru.mirea.archiver.ExceptionTest.xml" afterPath="$PROJECT_DIR$/rar/target/surefire-reports/TEST-ru.mirea.archiver.ExceptionTest.xml" />
-      <change beforePath="$PROJECT_DIR$/rar/target/surefire-reports/TEST-ru.mirea.archiver.MultiTest.xml" afterPath="$PROJECT_DIR$/rar/target/surefire-reports/TEST-ru.mirea.archiver.MultiTest.xml" />
-      <change beforePath="$PROJECT_DIR$/rar/target/surefire-reports/TEST-ru.mirea.archiver.PackTest.xml" afterPath="$PROJECT_DIR$/rar/target/surefire-reports/TEST-ru.mirea.archiver.PackTest.xml" />
-      <change beforePath="$PROJECT_DIR$/rar/target/surefire-reports/TEST-ru.mirea.archiver.UnpackTest.xml" afterPath="$PROJECT_DIR$/rar/target/surefire-reports/TEST-ru.mirea.archiver.UnpackTest.xml" />
-      <change beforePath="$PROJECT_DIR$/rar/target/surefire-reports/ru.mirea.archiver.CompressorTest.txt" afterPath="$PROJECT_DIR$/rar/target/surefire-reports/ru.mirea.archiver.CompressorTest.txt" />
-      <change beforePath="$PROJECT_DIR$/rar/target/surefire-reports/ru.mirea.archiver.CryptorTest.txt" afterPath="$PROJECT_DIR$/rar/target/surefire-reports/ru.mirea.archiver.CryptorTest.txt" />
-      <change beforePath="$PROJECT_DIR$/rar/target/surefire-reports/ru.mirea.archiver.ExceptionTest.txt" afterPath="$PROJECT_DIR$/rar/target/surefire-reports/ru.mirea.archiver.ExceptionTest.txt" />
-      <change beforePath="$PROJECT_DIR$/rar/target/surefire-reports/ru.mirea.archiver.MultiTest.txt" afterPath="$PROJECT_DIR$/rar/target/surefire-reports/ru.mirea.archiver.MultiTest.txt" />
-      <change beforePath="$PROJECT_DIR$/rar/target/surefire-reports/ru.mirea.archiver.PackTest.txt" afterPath="$PROJECT_DIR$/rar/target/surefire-reports/ru.mirea.archiver.PackTest.txt" />
-      <change beforePath="$PROJECT_DIR$/rar/target/surefire-reports/ru.mirea.archiver.UnpackTest.txt" afterPath="$PROJECT_DIR$/rar/target/surefire-reports/ru.mirea.archiver.UnpackTest.txt" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -58,13 +42,10 @@
       <file leaf-file-name="FrameMenu.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/rar/src/main/java/ru/mirea/archiver/FrameMenu.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
-              <caret line="350" column="65" lean-forward="false" selection-start-line="350" selection-start-column="65" selection-end-line="350" selection-end-column="65" />
+            <state relative-caret-position="-2895">
+              <caret line="156" column="31" lean-forward="false" selection-start-line="156" selection-start-column="31" selection-end-line="156" selection-end-column="31" />
               <folding>
-                <element signature="imports" expanded="true" />
                 <element signature="docComment;method#$$$getRootComponent$$$#0;class#FrameMenu#0" expanded="false" />
-                <element signature="e#21068#21069#0" expanded="true" />
-                <element signature="e#21100#21101#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -73,16 +54,11 @@
       <file leaf-file-name="PackerImpl.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/PackerImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="884">
-              <caret line="52" column="51" lean-forward="false" selection-start-line="52" selection-start-column="51" selection-end-line="52" selection-end-column="51" />
+            <state relative-caret-position="-425">
+              <caret line="181" column="32" lean-forward="false" selection-start-line="181" selection-start-column="32" selection-end-line="181" selection-end-column="32" />
               <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#4310#4311#0" expanded="true" />
-                <element signature="e#4366#4367#0" expanded="true" />
-                <element signature="e#7576#7577#0" expanded="true" />
-                <element signature="e#7622#7623#0" expanded="true" />
-                <element signature="e#9291#9292#0" expanded="true" />
-                <element signature="e#9337#9338#0" expanded="true" />
+                <element signature="e#9222#9223#0" expanded="true" />
+                <element signature="e#9268#9269#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -91,8 +67,8 @@
       <file leaf-file-name="Cryptor.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/Cryptor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="969">
-              <caret line="57" column="13" lean-forward="false" selection-start-line="57" selection-start-column="4" selection-end-line="57" selection-end-column="13" />
+            <state relative-caret-position="170">
+              <caret line="83" column="27" lean-forward="false" selection-start-line="83" selection-start-column="27" selection-end-line="83" selection-end-column="27" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -100,11 +76,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CompressorImpl.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="CompressorImpl.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/CompressorImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+            <state relative-caret-position="629">
+              <caret line="126" column="26" lean-forward="false" selection-start-line="126" selection-start-column="26" selection-end-line="126" selection-end-column="26" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -115,20 +91,32 @@
       <file leaf-file-name="UnpackerImpl.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/UnpackerImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="134">
-              <caret line="182" column="8" lean-forward="false" selection-start-line="182" selection-start-column="8" selection-end-line="182" selection-end-column="8" />
+            <state relative-caret-position="102">
+              <caret line="6" column="27" lean-forward="false" selection-start-line="6" selection-start-column="27" selection-end-line="6" selection-end-column="27" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <marker date="1527934210055" expanded="true" signature="6444:6451" ph="{...}" />
+                <marker date="1527934210055" expanded="true" signature="6576:7782" ph="{...}" />
+                <marker date="1527934210055" expanded="true" signature="9519:9998" ph="{...}" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DecompressorImpl.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Compressor.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/rar-api/src/main/java/ru/mirea/data/Compressor.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="17" lean-forward="false" selection-start-line="5" selection-start-column="17" selection-end-line="5" selection-end-column="17" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DecompressorImpl.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/DecompressorImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="368">
-              <caret line="40" column="95" lean-forward="false" selection-start-line="40" selection-start-column="95" selection-end-line="40" selection-end-column="95" />
+            <state relative-caret-position="-272">
+              <caret line="50" column="41" lean-forward="false" selection-start-line="50" selection-start-column="41" selection-end-line="50" selection-end-column="41" />
               <folding>
                 <element signature="e#3806#3807#0" expanded="true" />
                 <element signature="e#3868#3869#0" expanded="true" />
@@ -140,8 +128,8 @@
       <file leaf-file-name="DecryptorImpl.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/DecryptorImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="37">
-              <caret line="120" column="21" lean-forward="false" selection-start-line="120" selection-start-column="21" selection-end-line="120" selection-end-column="21" />
+            <state relative-caret-position="-1502">
+              <caret line="16" column="78" lean-forward="false" selection-start-line="16" selection-start-column="78" selection-end-line="16" selection-end-column="78" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -152,8 +140,8 @@
       <file leaf-file-name="EncryptorImpl.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/EncryptorImpl.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="96">
-              <caret line="128" column="0" lean-forward="false" selection-start-line="128" selection-start-column="0" selection-end-line="134" selection-end-column="0" />
+            <state relative-caret-position="153">
+              <caret line="16" column="78" lean-forward="false" selection-start-line="16" selection-start-column="78" selection-end-line="16" selection-end-column="78" />
               <folding />
             </state>
           </provider>
@@ -178,6 +166,7 @@
       <find>-1</find>
       <find>return -1</find>
       <find>return &quot;-2</find>
+      <find>tmp</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -234,14 +223,14 @@
         <option value="$PROJECT_DIR$/rar/src/test/java/ru/mirea/archiver/UnpackTest.java" />
         <option value="$PROJECT_DIR$/rar-api/src/main/java/ru/mirea/data/Decompressor.java" />
         <option value="$PROJECT_DIR$/rar-api/src/main/java/ru/mirea/data/Compressor.java" />
-        <option value="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/EncryptorImpl.java" />
-        <option value="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/CompressorImpl.java" />
         <option value="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/DecompressorImpl.java" />
-        <option value="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/DecryptorImpl.java" />
-        <option value="$PROJECT_DIR$/rar/src/main/java/ru/mirea/archiver/FrameMenu.java" />
         <option value="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/UnpackerImpl.java" />
         <option value="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/PackerImpl.java" />
+        <option value="$PROJECT_DIR$/rar/src/main/java/ru/mirea/archiver/FrameMenu.java" />
         <option value="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/Cryptor.java" />
+        <option value="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/EncryptorImpl.java" />
+        <option value="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/DecryptorImpl.java" />
+        <option value="$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/CompressorImpl.java" />
       </list>
     </option>
   </component>
@@ -264,11 +253,11 @@
       <select />
     </treeState>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="-15" />
-    <option name="y" value="-15" />
-    <option name="width" value="1386" />
-    <option name="height" value="788" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="374" />
+    <option name="y" value="-13" />
+    <option name="width" value="1400" />
+    <option name="height" value="891" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -292,38 +281,97 @@
         <subPane>
           <expand>
             <path>
-              <item name="Archiver2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Archiver2" type="462c0819:PsiDirectoryNode" />
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Archiver2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Archiver2" type="462c0819:PsiDirectoryNode" />
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
+              <item name="rar" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
+              <item name="rar" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
+              <item name="rar" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
+              <item name="rar" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
+              <item name="rar" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="archiver" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
+              <item name="rar" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
+              <item name="rar" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
+              <item name="rar" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="archiver" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
               <item name="rar-impl" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Archiver2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Archiver2" type="462c0819:PsiDirectoryNode" />
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
               <item name="rar-impl" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Archiver2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Archiver2" type="462c0819:PsiDirectoryNode" />
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
               <item name="rar-impl" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Archiver2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Archiver2" type="462c0819:PsiDirectoryNode" />
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
               <item name="rar-impl" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="Archiver2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Archiver2" type="462c0819:PsiDirectoryNode" />
+              <item name="Archiver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Archiver" type="462c0819:PsiDirectoryNode" />
               <item name="rar-impl" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
@@ -334,8 +382,8 @@
           <select />
         </subPane>
       </pane>
-      <pane id="AndroidView" />
       <pane id="Scope" />
+      <pane id="AndroidView" />
       <pane id="PackagesPane" />
       <pane id="Scratches" />
     </panes>
@@ -568,35 +616,31 @@
       <workItem from="1527322151765" duration="50414000" />
       <workItem from="1527417166969" duration="14090000" />
       <workItem from="1527582980984" duration="21821000" />
-      <workItem from="1527757293766" duration="363000" />
-      <workItem from="1527757785003" duration="975000" />
-      <workItem from="1527765559052" duration="391000" />
-      <workItem from="1527782177296" duration="3894000" />
-      <workItem from="1527839363586" duration="1056000" />
-      <workItem from="1527855955425" duration="6371000" />
+      <workItem from="1527708084239" duration="592000" />
+      <workItem from="1527934520443" duration="9706000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="175255000" />
+    <option name="totallyTimeSpent" value="172503000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="784" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <layout>
       <window_info id="Palette" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="WINDOWED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" x="898" y="248" width="132" height="584" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29508197" sideWeight="0.3022388" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29656607" sideWeight="0.3022388" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3287037" sideWeight="0.5559758" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298647" sideWeight="0.5533049" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298647" sideWeight="0.4978678" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45454547" sideWeight="0.6337953" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3287037" sideWeight="0.4440242" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24869928" sideWeight="0.6337953" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3298647" sideWeight="0.4466951" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.204236" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20202559" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -629,6 +673,7 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/weather-service/src/main/java/ru/mirea/weather/Encryptor.java" />
     <entry file="file://$PROJECT_DIR$/weather-service/src/main/java/ru/mirea/weather/HandlerCommandLine.java" />
     <entry file="file://$PROJECT_DIR$/weather-service/src/main/java/ru/mirea/weather/Menu.java" />
     <entry file="file://$PROJECT_DIR$/weather-service/src/main/java/ru/mirea/weather/Packer.java" />
@@ -707,6 +752,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="521">
+          <caret line="38" column="32" lean-forward="true" selection-start-line="38" selection-start-column="32" selection-end-line="38" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/rar/src/main/java/ru/mirea/archiver/FrameMenu.form">
       <provider selected="true" editor-type-id="ui-designer">
         <state />
@@ -740,13 +792,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rar/src/test/java/ru/mirea/archiver/CryptorTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="17" column="9" lean-forward="false" selection-start-line="17" selection-start-column="9" selection-end-line="17" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/rar/src/test/java/ru/mirea/archiver/ExceptionTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1038">
@@ -776,6 +821,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/UnpackerImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="27" lean-forward="false" selection-start-line="6" selection-start-column="27" selection-end-line="6" selection-end-column="27" />
+          <folding>
+            <marker date="1527934210055" expanded="true" signature="6444:6451" ph="{...}" />
+            <marker date="1527934210055" expanded="true" signature="6576:7782" ph="{...}" />
+            <marker date="1527934210055" expanded="true" signature="9519:9998" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rar/src/test/java/ru/mirea/archiver/CryptorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="17" column="9" lean-forward="false" selection-start-line="17" selection-start-column="9" selection-end-line="17" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/rar-api/src/main/java/ru/mirea/data/Compressor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
@@ -784,75 +849,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/CompressorImpl.java">
+    <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/PackerImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+        <state relative-caret-position="-425">
+          <caret line="181" column="32" lean-forward="false" selection-start-line="181" selection-start-column="32" selection-end-line="181" selection-end-column="32" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#9222#9223#0" expanded="true" />
+            <element signature="e#9268#9269#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rar/src/main/java/ru/mirea/archiver/FrameMenu.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="350" column="65" lean-forward="false" selection-start-line="350" selection-start-column="65" selection-end-line="350" selection-end-column="65" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="docComment;method#$$$getRootComponent$$$#0;class#FrameMenu#0" expanded="false" />
-            <element signature="e#21068#21069#0" expanded="true" />
-            <element signature="e#21100#21101#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19">
-          <caret line="45" column="20" lean-forward="true" selection-start-line="45" selection-start-column="20" selection-end-line="45" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/Cryptor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="969">
-          <caret line="57" column="13" lean-forward="false" selection-start-line="57" selection-start-column="4" selection-end-line="57" selection-end-column="13" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/PackerImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="884">
-          <caret line="52" column="51" lean-forward="false" selection-start-line="52" selection-start-column="51" selection-end-line="52" selection-end-column="51" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#4310#4311#0" expanded="true" />
-            <element signature="e#4366#4367#0" expanded="true" />
-            <element signature="e#7576#7577#0" expanded="true" />
-            <element signature="e#7622#7623#0" expanded="true" />
-            <element signature="e#9291#9292#0" expanded="true" />
-            <element signature="e#9337#9338#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/UnpackerImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="134">
-          <caret line="182" column="8" lean-forward="false" selection-start-line="182" selection-start-column="8" selection-end-line="182" selection-end-column="8" />
+        <state relative-caret-position="170">
+          <caret line="83" column="27" lean-forward="false" selection-start-line="83" selection-start-column="27" selection-end-line="83" selection-end-column="27" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -861,29 +872,49 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/EncryptorImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="128" column="0" lean-forward="false" selection-start-line="128" selection-start-column="0" selection-end-line="134" selection-end-column="0" />
+        <state relative-caret-position="153">
+          <caret line="16" column="78" lean-forward="false" selection-start-line="16" selection-start-column="78" selection-end-line="16" selection-end-column="78" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/DecryptorImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="37">
-          <caret line="120" column="21" lean-forward="false" selection-start-line="120" selection-start-column="21" selection-end-line="120" selection-end-column="21" />
+        <state relative-caret-position="-1502">
+          <caret line="16" column="78" lean-forward="false" selection-start-line="16" selection-start-column="78" selection-end-line="16" selection-end-column="78" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/rar/src/main/java/ru/mirea/archiver/FrameMenu.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2895">
+          <caret line="156" column="31" lean-forward="false" selection-start-line="156" selection-start-column="31" selection-end-line="156" selection-end-column="31" />
+          <folding>
+            <element signature="docComment;method#$$$getRootComponent$$$#0;class#FrameMenu#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/DecompressorImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
-          <caret line="40" column="95" lean-forward="false" selection-start-line="40" selection-start-column="95" selection-end-line="40" selection-end-column="95" />
+        <state relative-caret-position="-272">
+          <caret line="50" column="41" lean-forward="false" selection-start-line="50" selection-start-column="41" selection-end-line="50" selection-end-column="41" />
           <folding>
             <element signature="e#3806#3807#0" expanded="true" />
             <element signature="e#3868#3869#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/rar-impl/src/main/java/ru/mirea/data/CompressorImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="629">
+          <caret line="126" column="26" lean-forward="false" selection-start-line="126" selection-start-column="26" selection-end-line="126" selection-end-column="26" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
