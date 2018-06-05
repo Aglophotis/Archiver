@@ -17,81 +17,58 @@ public class UnpackerImpl implements Unpacker {
         int BUFFER_SIZE_UNPACK = 64000;
 
         String path = inputFile.getAbsolutePath();
-        final FileInputStream fileInputStream = new FileInputStream(path);
-
+        FileInputStream fileInputStream = new FileInputStream(path);
         char tmp = (char)fileInputStream.read();
-        while (fileInputStream.available() != 0) {
-            if (tmp == '0') {
-                fileOutputStream = createFile(fileOutputStream, fileInputStream, outputDirectory);
-                if (fileOutputStream == null) {
-                    fileInputStream.close();
-                    return -13;
-                }
-                int error = unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
-                if (error != 0) {
-                    closeFiles(fileInputStream, fileOutputStream);
-                    return error;
-                }
-            } else if (tmp == '1'){
-                fileOutputStream = createFile(fileOutputStream, fileInputStream, outputDirectory);
-                if (fileOutputStream == null) {
-                    fileInputStream.close();
-                    return -13;
-                }
-                int error = unpackWithCompression(fileInputStream, fileOutputStream);
-                if (error != 0) {
-                    closeFiles(fileInputStream, fileOutputStream);
-                    return error;
-                }
-            } else if (tmp == '2'){
-                int error = unpackWithCompression(fileInputStream, fileOutputStream);
-                if (error != 0) {
-                    closeFiles(fileInputStream, fileOutputStream);
-                    return error;
-                }
-            } else if (tmp == '3'){
-                int error = unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
-                if (error != 0) {
-                    closeFiles(fileInputStream, fileOutputStream);
-                    return error;
-                }
-            } else if (tmp == '4') {
-                fileOutputStream = createFile(fileOutputStream, fileInputStream, outputDirectory);
-                if (fileOutputStream == null) {
-                    fileInputStream.close();
-                    return -13;
-                }
-                int error = unpackRepeat(fileInputStream, fileOutputStream);
-                if (error != 0) {
-                    closeFiles(fileInputStream, fileOutputStream);
-                    return error;
-                }
-            } else if (tmp == '5'){
-                int error = unpackRepeat(fileInputStream, fileOutputStream);
-                if (error != 0) {
-                    closeFiles(fileInputStream, fileOutputStream);
-                    return error;
-                }
-            } else {
-                fileInputStream.close();
-                if (fileOutputStream != null) {
-                    fileOutputStream.close();
-                }
-                return -3;
-            }
-            tmp = (char)fileInputStream.read();
-        }
-        closeFiles(fileInputStream, fileOutputStream);
-        if (inputFile.getName().endsWith(".afkdec"))
-            if (!inputFile.delete())
-                return -8;
-        return 0;
-    }
 
-    private void closeFiles(FileInputStream fileInputStream, FileOutputStream fileOutputStream) throws IOException {
-        if (fileOutputStream != null)
-            fileOutputStream.close();
-        fileInputStream.close();
+        try {
+            while (fileInputStream.available() != 0) {
+                if (tmp == '0') {
+                    fileOutputStream = createFile(fileOutputStream, fileInputStream, outputDirectory);
+                    if (fileOutputStream == null)
+                        return -13;
+                    int error = unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+                    if (error != 0)
+                        return error;
+                } else if (tmp == '1') {
+                    fileOutputStream = createFile(fileOutputStream, fileInputStream, outputDirectory);
+                    if (fileOutputStream == null)
+                        return -13;
+                    int error = unpackWithCompression(fileInputStream, fileOutputStream);
+                    if (error != 0)
+                        return error;
+                } else if (tmp == '2') {
+                    int error = unpackWithCompression(fileInputStream, fileOutputStream);
+                    if (error != 0)
+                        return error;
+                } else if (tmp == '3') {
+                    int error = unpackWithoutCompression(fileInputStream, fileOutputStream, BUFFER_SIZE_UNPACK);
+                    if (error != 0)
+                        return error;
+                } else if (tmp == '4') {
+                    fileOutputStream = createFile(fileOutputStream, fileInputStream, outputDirectory);
+                    if (fileOutputStream == null)
+                        return -13;
+                    int error = unpackRepeat(fileInputStream, fileOutputStream);
+                    if (error != 0)
+                        return error;
+                } else if (tmp == '5') {
+                    int error = unpackRepeat(fileInputStream, fileOutputStream);
+                    if (error != 0)
+                        return error;
+                } else
+                    return -3;
+                tmp = (char) fileInputStream.read();
+            }
+        }
+        finally {
+            if (fileOutputStream != null)
+                fileOutputStream.close();
+            fileInputStream.close();
+            if (inputFile.getName().endsWith(".afkdec"))
+                if (!inputFile.delete())
+                    return -8;
+        }
+        return 0;
     }
 
     private int getInfo(FileInputStream fileInputStream, String[] strData, int[] intData) throws IOException {

@@ -21,6 +21,7 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
         byte[] bytes = new byte[BUFFER_SIZE];
         byte[][] groupBytes = new byte[15][BUFFER_SIZE];
         int quantitySymbols;
+        Thread[] threads = new Thread[4];
         globalPriority = 0;
 
         String path1 = outputFile.getAbsolutePath() + ".afk";
@@ -31,17 +32,12 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
 
         BlockEncryptor blockEncryptor = new BlockEncryptor(qIn, qOut, arrOfSizeSubblocks);
         Cryptor.Printer printer = new Cryptor.Printer(1, qOut, fileOutputStream);
-        Thread thread1 = new Thread(blockEncryptor);
-        Thread thread2 = new Thread(blockEncryptor);
-        Thread thread3 = new Thread(blockEncryptor);
-        Thread thread4 = new Thread(blockEncryptor);
+        for (int i = 0; i < threads.length; i++)
+            threads[i] = new Thread(blockEncryptor);
         Thread threadPrinter = new Thread(printer);
 
-
-        thread1.start();
-        thread2.start();
-        thread3.start();
-        thread4.start();
+        for (int i = 0; i < threads.length; i++)
+            threads[i].start();
         threadPrinter.start();
 
         int i = 0;
@@ -58,14 +54,12 @@ public class EncryptorImpl extends Cryptor implements Encryptor {
         }
         blockEncryptor.close();
 
-        for (int j = 0; j < 4; j++){
+        for (int j = 0; j < threads.length; j++){
             qIn.put(new Cryptor.BlockProperties(-1, groupBytes[i%15]));
         }
 
-        thread1.join();
-        thread2.join();
-        thread3.join();
-        thread4.join();
+        for (int j = 0; j < threads.length; j++)
+            threads[j].join();
 
         while (!qOut.isEmpty()){
             Thread.sleep(10);

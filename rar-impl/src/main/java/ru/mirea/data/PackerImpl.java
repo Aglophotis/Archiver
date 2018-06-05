@@ -36,6 +36,7 @@ public class PackerImpl implements Packer{
         byte[] bytes = new byte[BUFFER_SIZE];
         int quantitySymbols;
         String path = inputFile.getAbsolutePath();
+        Thread[] threads = new Thread[4];
 
         FileInputStream fileInputStream = new FileInputStream(path);
         BlockingQueue<BlockComponents> qIn = new LinkedBlockingQueue<>();
@@ -47,71 +48,71 @@ public class PackerImpl implements Packer{
         BlockPacker packer = new BlockPacker(qIn, qOut);
         Printer printer = new Printer(1, qOut, fileOutputStream);
 
-        Thread thread1 = new Thread(packer);
-        Thread thread2 = new Thread(packer);
-        Thread thread3 = new Thread(packer);
-        Thread thread4 = new Thread(packer);
-        Thread threadPrinter = new Thread(printer);
+        try{
+            for (int i = 0; i < threads.length; i++)
+                threads[i] = new Thread(packer);
+            Thread threadPrinter = new Thread(printer);
 
-        thread1.start();
-        thread2.start();
-        thread3.start();
-        thread4.start();
-        threadPrinter.start();
+            for (int i = 0; i < threads.length; i++)
+                threads[i].start();
+            threadPrinter.start();
 
-        int i = 0;
-        while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE)) > 0) {
-            groupBytes[i%15] = bytes.clone();
-            while (qIn.size() > 5)
+            int i = 0;
+            while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE)) > 0) {
+                groupBytes[i%15] = bytes.clone();
+                while (qIn.size() > 5)
+                    Thread.sleep(1);
+                qIn.put(new BlockComponents(fileName, quantitySymbols, groupBytes[i%15]));
+                fileName = "";
+            }
+
+            while (!qIn.isEmpty()){
+                Thread.sleep(5);
+            }
+            packer.close();
+
+            for (int j = 0; j < threads.length; j++){
+                qIn.put(new BlockComponents("-1", -1, groupBytes[i%15]));
+            }
+
+            for (int j = 0; j < threads.length; j++)
+                threads[j].join();
+
+            while (!qOut.isEmpty()){
                 Thread.sleep(1);
-            qIn.put(new BlockComponents(fileName, quantitySymbols, groupBytes[i%15]));
-            fileName = "";
+            }
+            printer.close();
+
+            threadPrinter.join();
+
+            qIn.clear();
+            qOut.clear();
         }
-
-        while (!qIn.isEmpty()){
-            Thread.sleep(5);
+        finally {
+            fileInputStream.close();
+            fileOutputStream.close();
         }
-        packer.close();
-
-        for (int j = 0; j < 4; j++){
-            qIn.put(new BlockComponents("-1", -1, groupBytes[i%15]));
-        }
-
-        thread1.join();
-        thread2.join();
-        thread3.join();
-        thread4.join();
-
-        while (!qOut.isEmpty()){
-            Thread.sleep(1);
-        }
-        printer.close();
-
-        threadPrinter.join();
-
-        qIn.clear();
-        qOut.clear();
-
-        fileInputStream.close();
-        fileOutputStream.close();
         return 0;
     }
 
     private int packWithoutCompression(File inputFile, FileOutputStream fileOutputStream) throws IOException {
         byte[] bytes = new byte[BUFFER_SIZE];
         int quantitySymbols;
-        ByteBuffer buf = charset.encode(getInfo(inputFile));
-        byte[] meta = buf.array();
         String path = inputFile.getAbsolutePath();
-        fileOutputStream.write(meta, 0, meta.length);
         FileInputStream fileInputStream = new FileInputStream(path);
+        try {
+            ByteBuffer buf = charset.encode(getInfo(inputFile));
+            byte[] meta = buf.array();
+            fileOutputStream.write(meta, 0, meta.length);
 
-        while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE)) > 0) {
-            fileOutputStream.write(bytes, 0, quantitySymbols);
+            while ((quantitySymbols = fileInputStream.read(bytes, 0, BUFFER_SIZE)) > 0) {
+                fileOutputStream.write(bytes, 0, quantitySymbols);
+            }
         }
-
-        fileInputStream.close();
-        fileOutputStream.close();
+        finally {
+            fileInputStream.close();
+            fileOutputStream.close();
+        }
         return 0;
     }
 

@@ -20,6 +20,7 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
         byte[] bytes = new byte[BUFFER_SIZE];
         byte[][] groupBytes = new byte[15][BUFFER_SIZE];
         int quantitySymbols;
+        Thread[] threads = new Thread[4];
         globalPriority = 0;
 
         String path1 = inputFile.getAbsolutePath();
@@ -30,17 +31,12 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
 
         BlockDecryptor blockDecryptor = new BlockDecryptor(qIn, qOut, arrOfSizeSubblocks);
         Printer printer = new Printer(1, qOut, fileOutputStream);
-        Thread thread1 = new Thread(blockDecryptor);
-        Thread thread2 = new Thread(blockDecryptor);
-        Thread thread3 = new Thread(blockDecryptor);
-        Thread thread4 = new Thread(blockDecryptor);
+        for (int i = 0; i < threads.length; i++)
+            threads[i] = new Thread(blockDecryptor);
         Thread threadPrinter = new Thread(printer);
 
-
-        thread1.start();
-        thread2.start();
-        thread3.start();
-        thread4.start();
+        for (int i = 0; i < threads.length; i++)
+            threads[i].start();
         threadPrinter.start();
 
         int i = 0;
@@ -57,14 +53,12 @@ public class DecryptorImpl extends Cryptor implements Decryptor{
         }
         blockDecryptor.close();
 
-        for (int j = 0; j < 10; j++){
-            qIn.put(new BlockProperties(-1, groupBytes[i%15]));
+        for (int j = 0; j < threads.length; j++){
+            qIn.put(new Cryptor.BlockProperties(-1, groupBytes[i%15]));
         }
 
-        thread1.join();
-        thread2.join();
-        thread3.join();
-        thread4.join();
+        for (int j = 0; j < threads.length; j++)
+            threads[j].join();
 
         while (!qOut.isEmpty()){
             Thread.sleep(1);

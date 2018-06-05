@@ -7,10 +7,14 @@ import ru.mirea.data.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class FrameMenu {
     private JFrame frame = new JFrame("Archiver");
@@ -23,10 +27,12 @@ public class FrameMenu {
     private JCheckBox jCheckBoxCrypt;
     private JPasswordField passwordEnter;
     private JPasswordField passwordRepeat;
-    private JCheckBox jCheckBoxCloud;
+    private JCheckBox jCheckBoxToServer;
     private JCheckBox jCheckBoxDeletePack;
     private JCheckBox jCheckBoxDeleteUnpack;
     private JScrollPane jScrollPane;
+    private JCheckBox jCheckBoxFromServer;
+    private JTextField textFiledFileName;
     private JMenuBar menuBar = new JMenuBar();
     private JMenu fileMenu = new JMenu("File");
     private JMenuItem inputItem = new JMenuItem("Input files");
@@ -34,7 +40,7 @@ public class FrameMenu {
 
     private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     private int sizeWidth = 550;
-    private int sizeHeight = 500;
+    private int sizeHeight = 550;
     private int locationX = (screenSize.width - sizeWidth) / 2;
     private int locationY = (screenSize.height - sizeHeight) / 2;
 
@@ -44,9 +50,16 @@ public class FrameMenu {
 
     private static File[] inputFiles;
     private static File outputFile;
-    private boolean[] flags = new boolean[6];
+    private boolean[] flags = new boolean[7];
 
-    private FrameMenu() throws IOException {
+    private BlockingQueue<File> qOut;
+    private BlockingQueue<File> qIn;
+    private BlockingQueue<File> qFile;
+
+    public FrameMenu(BlockingQueue<File> qOut, BlockingQueue<File> qIn, BlockingQueue<File> qFile) throws IOException {
+        this.qOut = qOut;
+        this.qIn = qIn;
+        this.qFile = qFile;
         jFileChooserInput = new JFileChooser(new File(".").getCanonicalPath());
         jFileChooserOutput = new JFileChooser(new File(".").getCanonicalPath());
 
@@ -54,6 +67,8 @@ public class FrameMenu {
         passwordEnter.setEnabled(false);
         passwordRepeat.setEnabled(false);
         jCheckBoxDeleteUnpack.setEnabled(false);
+        jCheckBoxFromServer.setEnabled(false);
+        textFiledFileName.setEnabled(false);
 
         jRadioButtonUnpack.addActionListener(e -> {
             jCheckBoxCompression.setEnabled(false);
@@ -64,6 +79,9 @@ public class FrameMenu {
             jFileChooserOutput.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             jFileChooserInput.addChoosableFileFilter(filter);
             jFileChooserInput.setFileFilter(filter);
+            jCheckBoxToServer.setEnabled(false);
+            jCheckBoxFromServer.setEnabled(true);
+            textFiledFileName.setEnabled(true);
         });
 
         jRadioButtonPack.addActionListener(e -> {
@@ -74,6 +92,9 @@ public class FrameMenu {
             jFileChooserInput.setSelectedFiles(new File[]{new File("")});
             jFileChooserOutput.setFileSelectionMode(JFileChooser.FILES_ONLY);
             jFileChooserInput.removeChoosableFileFilter(filter);
+            jCheckBoxToServer.setEnabled(true);
+            jCheckBoxFromServer.setEnabled(false);
+            textFiledFileName.setEnabled(false);
         });
 
         inputItem.addActionListener(e -> {
@@ -119,7 +140,7 @@ public class FrameMenu {
                     logArea.append("File not found: " + item.getName() + "\n");
                     return;
                 }
-                if (item.equals(outputFile) || (new File(outputFile.getAbsolutePath() + ".afk").equals(item))) {
+                if ((item.equals(outputFile) || (new File(outputFile.getAbsolutePath() + ".afk").equals(item))) && !jCheckBoxFromServer.isSelected()) {
                     printDate();
                     logArea.append("Input file: " + item.getAbsolutePath() + " equals output file\n");
                     return;
@@ -134,9 +155,18 @@ public class FrameMenu {
             flags[0] = jRadioButtonPack.isSelected();
             flags[1] = jCheckBoxCompression.isSelected();
             flags[2] = jCheckBoxCrypt.isSelected();
-            flags[3] = jCheckBoxCloud.isSelected();
+            flags[3] = jCheckBoxToServer.isSelected();
             flags[4] = jCheckBoxDeletePack.isSelected();
             flags[5] = jCheckBoxDeleteUnpack.isSelected();
+            flags[6] = jCheckBoxFromServer.isSelected();
+
+            if (flags[6]) {
+                if (textFiledFileName.getText().length() == 0) {
+                    printDate();
+                    logArea.append("Error: filename not entered\n");
+                    return;
+                }
+            }
             if (flags[2]) {
                 String password = new String(passwordEnter.getPassword());
                 String rPassword = new String(passwordRepeat.getPassword());
@@ -172,10 +202,26 @@ public class FrameMenu {
             if (result == 1)
                 logArea.append("Unknown error\n");
         });
+
+        jCheckBoxToServer.addActionListener(e -> {
+            if (jCheckBoxToServer.isSelected()) {
+                jFileChooserInput.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                jCheckBoxFromServer.setSelected(false);
+            }
+        });
+
+        jCheckBoxFromServer.addActionListener(e -> {
+            if (jCheckBoxFromServer.isSelected()) {
+                jFileChooserInput.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                jCheckBoxToServer.setSelected(false);
+            } else {
+                jFileChooserInput.setFileSelectionMode(JFileChooser.FILES_ONLY);
+            }
+        });
     }
 
-    private void openFrame() throws IOException {
-        frame.setContentPane(new FrameMenu().panelMain);
+    public void openFrame() {
+        frame.setContentPane(panelMain);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setBounds(locationX, locationY, sizeWidth, sizeHeight);
@@ -243,7 +289,22 @@ public class FrameMenu {
                     }
                 }
             }
+            if (flags[3]) {
+                qOut.put(new File(outputFile.getAbsolutePath() + ".afk"));
+            }
         } else {
+            if (flags[6]) {
+                qIn.put(new File(textFiledFileName.getText()));
+                qFile.put(inputFiles[0]);
+                while (qFile.size() != 0)
+                    Thread.sleep(1);
+                File file = new File(qFile.take().getAbsolutePath());
+                if (file.getName().equals(":error")) {
+                    printError(-15);
+                    return -1;
+                }
+                inputFiles[0] = file;
+            }
             if (flags[2]) {
                 for (File item : inputFiles) {
                     Decryptor decryptor = new DecryptorImpl();
@@ -265,9 +326,6 @@ public class FrameMenu {
                     updateFrame();
                     if ((error = unpacker.unpack(new File(item.getAbsolutePath() + "dec"), outputFile)) != 0) {
                         printError(error);
-                        if (new File(item.getAbsolutePath() + "dec").exists())
-                            if (!(new File(item.getAbsolutePath() + "dec").delete()))
-                                printError(-8);
                         return -1;
                     }
                     printDate();
@@ -360,13 +418,19 @@ public class FrameMenu {
             case -14:
                 logArea.append("Error: password is incorrect\n");
                 break;
+            case -15:
+                logArea.append("Error: file not found in server\n");
+                break;
             default:
                 logArea.append("Error: unknown error\n");
         }
     }
 
     public static void main(String[] args) throws Exception {
-        FrameMenu frameMenu = new FrameMenu();
+        BlockingQueue<File> qOut = new LinkedBlockingQueue<>();
+        BlockingQueue<File> qIn = new LinkedBlockingQueue<>();
+        BlockingQueue<File> qFile = new LinkedBlockingQueue<>();
+        FrameMenu frameMenu = new FrameMenu(qOut, qIn, qFile);
         frameMenu.openFrame();
     }
 
@@ -386,7 +450,7 @@ public class FrameMenu {
      */
     private void $$$setupUI$$$() {
         panelMain = new JPanel();
-        panelMain.setLayout(new GridLayoutManager(13, 3, new Insets(10, 20, 0, 20), -1, -1));
+        panelMain.setLayout(new GridLayoutManager(16, 3, new Insets(10, 20, 0, 20), -1, -1));
         panelMain.setAutoscrolls(true);
         panelMain.setFocusable(true);
         panelMain.setInheritsPopupMenu(false);
@@ -397,14 +461,14 @@ public class FrameMenu {
         panelMain.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(new Color(-4504510)), null));
         jScrollPane = new JScrollPane();
         jScrollPane.setAutoscrolls(true);
-        panelMain.add(jScrollPane, new GridConstraints(1, 0, 12, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(300, 383), new Dimension(330, 222), new Dimension(300, 382), 0, false));
+        panelMain.add(jScrollPane, new GridConstraints(1, 0, 15, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_VERTICAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, new Dimension(300, 433), new Dimension(330, 433), new Dimension(300, 433), 0, false));
         logArea = new JTextArea();
         logArea.setColumns(2);
         logArea.setEditable(false);
         logArea.setEnabled(true);
         logArea.setFocusable(true);
         logArea.setLineWrap(true);
-        logArea.setMaximumSize(new Dimension(300, 500));
+        logArea.setMaximumSize(new Dimension(300, 550));
         logArea.setText("");
         logArea.setWrapStyleWord(true);
         jScrollPane.setViewportView(logArea);
@@ -412,7 +476,7 @@ public class FrameMenu {
         buttonAccept.setActionCommand("Accept");
         buttonAccept.setLabel("Accept");
         buttonAccept.setText("Accept");
-        panelMain.add(buttonAccept, new GridConstraints(12, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelMain.add(buttonAccept, new GridConstraints(15, 1, 1, 1, GridConstraints.ANCHOR_NORTH, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label1 = new JLabel();
         label1.setAlignmentX(0.0f);
         label1.setAlignmentY(0.0f);
@@ -429,31 +493,39 @@ public class FrameMenu {
         panelMain.add(jRadioButtonUnpack, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(100, 20), null, 0, false));
         jCheckBoxCrypt = new JCheckBox();
         jCheckBoxCrypt.setText("Crypt");
-        panelMain.add(jCheckBoxCrypt, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelMain.add(jCheckBoxCrypt, new GridConstraints(10, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         passwordEnter = new JPasswordField();
-        panelMain.add(passwordEnter, new GridConstraints(9, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        panelMain.add(passwordEnter, new GridConstraints(12, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         jCheckBoxCompression = new JCheckBox();
         jCheckBoxCompression.setActionCommand("Check");
         jCheckBoxCompression.setLabel("Compression");
         jCheckBoxCompression.setText("Compression");
         panelMain.add(jCheckBoxCompression, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         passwordRepeat = new JPasswordField();
-        panelMain.add(passwordRepeat, new GridConstraints(11, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        panelMain.add(passwordRepeat, new GridConstraints(14, 1, 1, 1, GridConstraints.ANCHOR_NORTHWEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setText("Enter password");
-        panelMain.add(label2, new GridConstraints(8, 1, 1, 1, GridConstraints.ANCHOR_SOUTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelMain.add(label2, new GridConstraints(11, 1, 1, 1, GridConstraints.ANCHOR_SOUTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
         label3.setText("Repeat password");
-        panelMain.add(label3, new GridConstraints(10, 1, 1, 1, GridConstraints.ANCHOR_SOUTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panelMain.add(label3, new GridConstraints(13, 1, 1, 1, GridConstraints.ANCHOR_SOUTHWEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         jCheckBoxDeletePack = new JCheckBox();
         jCheckBoxDeletePack.setText("Delete files after packing");
         panelMain.add(jCheckBoxDeletePack, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        jCheckBoxCloud = new JCheckBox();
-        jCheckBoxCloud.setText("Cloud");
-        panelMain.add(jCheckBoxCloud, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        jCheckBoxToServer = new JCheckBox();
+        jCheckBoxToServer.setText("To server");
+        panelMain.add(jCheckBoxToServer, new GridConstraints(6, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         jCheckBoxDeleteUnpack = new JCheckBox();
         jCheckBoxDeleteUnpack.setText("Delete archive after unpacking");
         panelMain.add(jCheckBoxDeleteUnpack, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        jCheckBoxFromServer = new JCheckBox();
+        jCheckBoxFromServer.setText("From server");
+        panelMain.add(jCheckBoxFromServer, new GridConstraints(7, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        textFiledFileName = new JTextField();
+        panelMain.add(textFiledFileName, new GridConstraints(9, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JLabel label4 = new JLabel();
+        label4.setText("Enter filename");
+        panelMain.add(label4, new GridConstraints(8, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         ButtonGroup buttonGroup;
         buttonGroup = new ButtonGroup();
         buttonGroup.add(jRadioButtonPack);

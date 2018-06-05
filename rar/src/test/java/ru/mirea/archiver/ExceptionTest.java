@@ -130,7 +130,7 @@ public class ExceptionTest {
         String path5 = new File(".").getCanonicalPath() + "\\" + "test4";
         String path3 = new File(".").getCanonicalPath() + "\\" + "testing.afk";
         String path6 = new File(".").getCanonicalPath() + "\\" + "testing.afkdec";
-        for (int i = 1; i < 50; i++){
+        for (int i = 1; i < 20; i++){
             System.out.println(i);
             FileOutputStream fileOutputStream1 = new FileOutputStream(path1);
             FileOutputStream fileOutputStream2 = new FileOutputStream(path2);
